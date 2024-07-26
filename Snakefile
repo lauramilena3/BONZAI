@@ -55,11 +55,20 @@ def inputReadsCount(wildcards):
 	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_clean_read_count.txt", sample=SAMPLES))
 	return inputs
 
+def inputQC(wildcards):
+	inputs=[]
+	inputs.append(dirs_dict["QC_DIR"]+ "/preQC_illumina_report.html")
+	inputs.append(dirs_dict["QC_DIR"]+ "/postQC_illumina_report.html")
+	inputs.append(dirs_dict["QC_DIR"]+ "/pre_decontamination_kraken_multiqc_report.html")
+	inputs.append(dirs_dict["QC_DIR"]+ "/post_decontamination_kraken_multiqc_report.html")
+	inputs.extend(expand(dirs_dict["QC_DIR"] + "/{sample}_stats_pcr_duplicates.log", sample=SAMPLES)),
+	return inputs
+
 
 rule all:
 	input:
 		inputReadsCount,
-		# inputQC,
+		inputQC,
 		# inputAssembly,
 		# inputMapping,
 		# inputTranscriptomeAssembly,

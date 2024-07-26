@@ -118,7 +118,7 @@ rule contaminants_KRAKEN:
 			--output {output.kraken_output_unpaired} --report {output.kraken_report_unpaired}
 		"""
 
-rule remove_euk:
+rule remove_contaminants:
 	input:
 		forward_paired=(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired.fastq.gz"),
 		reverse_paired=(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired.fastq.gz"),
@@ -224,4 +224,22 @@ rule postkrakenMultiQC:
 	shell:
 		"""
 		multiqc -f {input} -o {params.multiqc_dir} -n {params.html_name}
+		"""
+		
+rule superDeduper_pcr:
+	input:
+		forward_file=dirs_dict["RAW_DATA_DIR"] + "/{sample}_" + str(config['forward_tag']) + ".fastq.gz",
+		reverse_file=dirs_dict["RAW_DATA_DIR"] + "/{sample}_" + str(config['reverse_tag']) + ".fastq.gz",
+	output:
+		duplicate_stats=(dirs_dict["QC_DIR"] + "/{sample}_stats_pcr_duplicates.log"),
+		deduplicate=temp(dirs_dict["QC_DIR"] + "/{sample}_stats_pcr_duplicates.out"),
+	message:
+		"Detect PCR duplicates"
+	conda:
+		dirs_dict["ENVS_DIR"]+ "/QC.yaml"
+	benchmark:
+		dirs_dict["BENCHMARKS"] +"/SuperDeduper/{sample}_pcr_duplicates.tsv"
+	shell:
+		"""
+		hts_SuperDeduper -L {output.duplicate_stats} -1 {input.forward_file} -2 {input.reverse_file} > {output.deduplicate}
 		"""
