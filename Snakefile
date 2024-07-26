@@ -43,6 +43,9 @@ print("Sample Names = ")
 print(*SAMPLES, sep = ", ")
 print(len(SAMPLES))
 
+print("Read Types")
+print(READ_TYPES)
+
 def inputReadsCount(wildcards):
 # Read counts
 	inputs=[]
