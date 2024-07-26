@@ -26,5 +26,5 @@ rule downloadminiKrakenDB:
 		"""
 		wget ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/minikraken_8GB_202003.tgz
 		mkdir {output.kraken_db}
-		tar -
+		tar -xvf minikraken_8GB_202003.tgz -C {output.kraken_db}
 		"""

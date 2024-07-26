@@ -67,7 +67,7 @@ rule preMultiQC:
 		multiqc=dirs_dict["QC_DIR"]+ "/preQC_illumina_report.html",
 		multiqc_txt=dirs_dict["QC_DIR"]+ "/preQC_illumina_report_data/multiqc_fastqc.txt",
 	params:
-		fastqc_dir=dirs_dict["RAW_DATA_DIR"],
+		fastqc_dir=dirs_dict["QC_DIR"],
 		html_name="preQC_illumina_report.html",
 		multiqc_dir=dirs_dict["QC_DIR"],
 	message:
