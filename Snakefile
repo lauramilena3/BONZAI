@@ -49,13 +49,13 @@ def inputReadsCount(wildcards):
 	inputs.extend(expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_" + str(config['reverse_tag']) + "_read_count.txt", sample=SAMPLES))
 	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_read_count.txt", sample=SAMPLES))
 	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_read_count.txt", sample=SAMPLES))
-	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_merged_unpaired.tot_read_count.txt", sample=SAMPLES))
-	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_noEuk.tot_read_count.txt", sample=SAMPLES))
-	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_noEuk.tot_read_count.txt", sample=SAMPLES))
-	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_noEuk.tot_read_count.txt", sample=SAMPLES))
-	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_clean.tot_read_count.txt", sample=SAMPLES))
-	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean.tot_read_count.txt", sample=SAMPLES))
-	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_clean.tot_read_count.txt", sample=SAMPLES))
+	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_merged_unpaired_read_count.txt", sample=SAMPLES))
+	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_noEuk_read_count.txt", sample=SAMPLES))
+	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_noEuk_read_count.txt", sample=SAMPLES))
+	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_noEuk_read_count.txt", sample=SAMPLES))
+	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_clean_read_count.txt", sample=SAMPLES))
+	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean_read_count.txt", sample=SAMPLES))
+	inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_clean_read_count.txt", sample=SAMPLES))
 	return inputs
 
 
