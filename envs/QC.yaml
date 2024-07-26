@@ -1,0 +1,10 @@
+channels:
+  - conda-forge
+  - bioconda
+  - biobuilds
+  - daler
+dependencies:
+  - multiqc =1.11      #python3.6
+  - nanofilt =2.8.0   #python3.6
+  - nanostat =1.6.0
+  - fastqc =0.11.9    #Java

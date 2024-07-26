@@ -1,0 +1,17 @@
+#General
+input_dir: ""
+results_dir: ""
+
+forward_tag: "R1"
+reverse_tag: "R2"
+
+#Trimmomatic
+trimmomatic_leading: "20"
+trimmomatic_trailing: "20"
+trimmomatic_window_size: "4"
+trimmomatic_window_quality: "20"
+trimmomatic_minlen: "50"
+adapters_file: "adapters.fa"
+
+kraken_db: "db/KRAKEN/minikraken_8GB_202003"
+kraken_tools: "tools/KrakenTools"
