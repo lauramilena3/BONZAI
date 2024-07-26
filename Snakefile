@@ -67,7 +67,7 @@ rule all:
 		inputQC,
 		inputAssembly,
 		inputMapping,
-		inputTranscriptomeAssembly
+		inputTranscriptomeAssembly,
 		inputAnnotation,
 		inputAbundance,
 
