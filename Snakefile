@@ -61,12 +61,12 @@ def inputReadsCount(wildcards):
 rule all:
 	input:
 		inputReadsCount,
-		inputQC,
-		inputAssembly,
-		inputMapping,
-		inputTranscriptomeAssembly,
-		inputAnnotation,
-		inputAbundance,
+		# inputQC,
+		# inputAssembly,
+		# inputMapping,
+		# inputTranscriptomeAssembly,
+		# inputAnnotation,
+		# inputAbundance,
 
 
 include: os.path.join(RULES_DIR, '00_download_tools.smk')
