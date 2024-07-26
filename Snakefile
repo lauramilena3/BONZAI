@@ -38,9 +38,6 @@ print(RAW_DATA_DIR)
 print("Results Directory")
 print(RESULTS_DIR)
 
-print("Read Types = " )
-print(*READ_TYPES, sep = ", ")
-
 print("Sample Names = ")
 print(*SAMPLES, sep = ", ")
 print(len(SAMPLES))
