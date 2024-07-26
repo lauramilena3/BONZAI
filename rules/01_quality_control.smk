@@ -60,6 +60,53 @@ rule fastQC_post:
 		fastqc {input}
 		"""
 
+rule preMultiQC:
+	input:
+		#html=expand(dirs_dict["RAW_DATA_DIR"]+"/{sample}_{reads}_fastqc.html", sample=SAMPLES, reads=READ_TYPES),
+		zipped=expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_{reads}_fastqc.zip", sample=SAMPLES, reads=READ_TYPES),
+	output:
+		multiqc=dirs_dict["QC_DIR"]+ "/preQC_illumina_report.html",
+		multiqc_txt=dirs_dict["QC_DIR"]+ "/preQC_illumina_report_data/multiqc_fastqc.txt",
+	params:
+		fastqc_dir=dirs_dict["RAW_DATA_DIR"],
+		html_name="preQC_illumina_report.html",
+		multiqc_dir=dirs_dict["QC_DIR"],
+	message:
+		"Generating MultiQC report"
+	conda:
+		dirs_dict["ENVS_DIR"]+ "/QC.yaml"
+	benchmark:
+		dirs_dict["BENCHMARKS"] +"/multiQC/multiqc_pre.tsv"
+	shell:
+		"""
+		multiqc -f {params.fastqc_dir} -o {params.multiqc_dir} -n {params.html_name}
+		"""
+
+rule postMultiQC:
+	input:
+		zipped_forward=expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_clean_fastqc.zip", sample=SAMPLES),
+		zipped_reverse=expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean_fastqc.zip", sample=SAMPLES),
+		zipped_unpaired=expand(dirs_dict["CLEAN_DATA_DIR"]  + "/{sample}_unpaired_clean_fastqc.zip", sample=SAMPLES),
+	output:
+		multiqc=dirs_dict["QC_DIR"]+ "/postQC_illumina_report.html",
+		multiqc_txt=dirs_dict["QC_DIR"]+ "/postQC_illumina_report_data/multiqc_fastqc.txt",
+	params:
+		fastqc_dir=dirs_dict["CLEAN_DATA_DIR"],
+		html_name="postQC_illumina_report.html",
+		multiqc_dir=dirs_dict["QC_DIR"]
+	message:
+		"Generating MultiQC report"
+	conda:
+		dirs_dict["ENVS_DIR"]+ "/QC.yaml"
+	priority: 1
+	benchmark:
+		dirs_dict["BENCHMARKS"] +"/multiQC/multiqc_post.tsv"
+	shell:
+		"""
+		multiqc -f {params.fastqc_dir}/*zip -o {params.multiqc_dir} -n {params.html_name}
+		"""
+
+
 rule trim_adapters_quality_illumina_PE:
 	input:
 		forward_file=dirs_dict["RAW_DATA_DIR"] + "/{sample}_" + str(config['forward_tag']) + ".fastq.gz",
