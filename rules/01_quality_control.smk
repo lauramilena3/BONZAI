@@ -131,7 +131,7 @@ rule remove_contaminants:
 	output:
 		forward_paired=(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_clean.fastq.gz"),
 		reverse_paired=(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean.fastq.gz"),
-		unpaired=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_clean.fastq"),
+		unpaired=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_clean.fastq.gz"),
 	message:
 		"Removing contaminants with Kraken"
 	params:
