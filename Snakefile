@@ -31,6 +31,7 @@ dir_list = ["RULES_DIR","ENVS_DIR", "ADAPTERS_DIR", "RAW_NOTEBOOKS","RAW_DATA_DI
 dir_names = ["rules", "../envs", "db/adapters", "../notebooks" ,RAW_DATA_DIR, RESULTS_DIR + "/01_QC", RESULTS_DIR + "/01_QC", RESULTS_DIR + "/02_ASSEMBLY", RESULTS_DIR + "/03_MAPPING" , RESULTS_DIR + "/04_TRANSCRIPTOME_ASSEMBLY", RESULTS_DIR + "/05_ANNOTATION", RESULTS_DIR + "/06_GENE_EXPRESSION", RESULTS_DIR + "/BENCHMARK", RESULTS_DIR + "/NOTEBOOKS" ,RESULTS_DIR + "/FIGURES_AND_TABLES"]
 dirs_dict = dict(zip(dir_list, dir_names))
 
+READ_TYPES=[config['forward_tag'],config['reverse_tag']]
 
 print("Input Directory")
 print(RAW_DATA_DIR)
