@@ -175,9 +175,12 @@ rule remove_contaminants:
 		kraken_report_unpaired=(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_kraken2_report_unpaired.csv"),
 		kraken_tools=(config['kraken_tools']),
 	output:
-		forward_paired=(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_clean.fastq.gz"),
-		reverse_paired=(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean.fastq.gz"),
-		unpaired=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_clean.fastq.gz"),
+		forward_paired=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_clean.fastq"),
+		reverse_paired=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean.fastq"),
+		unpaired=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_clean.fastq"),
+		forward_paired_gz=(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_clean.fastq.gz"),
+		reverse_paired_gz=(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean.fastq.gz"),
+		unpaired_gz=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_clean.fastq.gz"),
 	message:
 		"Removing contaminants with Kraken"
 	params:
@@ -199,6 +202,9 @@ rule remove_contaminants:
 		python {input.kraken_tools}/extract_kraken_reads.py -k {input.kraken_output_unpaired} \
 			-s {input.merged_unpaired} -o {output.unpaired} --exclude --taxid {params.host_taxid} --include-children \
 			-r {input.kraken_report_unpaired} --fastq-output
+		gzip {output.forward_paired}
+		gzip {output.reverse_paired}
+		gzip {output.unpaired}
 		"""
 
 rule contaminants_KRAKEN_clean:
