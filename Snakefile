@@ -36,7 +36,7 @@ READ_TYPES=[config['forward_tag'],config['reverse_tag']]
 REFERENCE_GENOME_ACC=config['reference_acc_list'].split()
 
 wildcard_constraints:
-	reference_genome="[A-Z]+_[0-9]+"
+	reference_genome="[A-Z]+_[0-9]+\.[0-9]"
 
 print("Input Directory")
 print(RAW_DATA_DIR)
