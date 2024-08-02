@@ -13,5 +13,5 @@ trimmomatic_window_quality: "20"
 trimmomatic_minlen: "50"
 adapters_file: "adapters.fa"
 
-kraken_db: "db/KRAKEN/minikraken_8GB_202003"
+kraken_db: "db/KRAKEN/minikraken_8GB_20200312"
 kraken_tools: "tools/KrakenTools"
