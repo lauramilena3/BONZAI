@@ -17,8 +17,9 @@ rule getKrakenTools:
 rule downloadminiKrakenDB:
 	output:
 		minikraken_db=directory("db/KRAKEN/minikraken_8GB_202003"),
+		minikraken_gz=temp("minikraken_8GB_202003.tgz"),
 	params:
-		db_dir=dirs_dict["DB_DIR"] 
+		db_dir="db/KRAKEN/"
 	message:
 		"Downloading miniKraken database"
 	threads: 4
@@ -28,7 +29,7 @@ rule downloadminiKrakenDB:
 		"""
 		wget ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/minikraken_8GB_202003.tgz
 		mkdir -p {params.db_dir}
-		tar -xvf minikraken_8GB_202003.tgz -C {params.db_dir}
+		tar -xvf {output.minikraken_gz} -C {params.db_dir}
 		"""
 
 rule download_reference_genomes:
