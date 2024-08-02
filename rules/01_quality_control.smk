@@ -12,19 +12,19 @@ rule countReads_gz:
 		echo $(( $(zgrep -Ec "$" {input.fastq}) / 4 )) > {output.counts}
 		"""
 
-rule countReads:
-	input:
-		fastq="{fastq_name}.fastq",
-	output:
-		counts="{fastq_name}_read_count.txt",
-	message:
-		"Counting reads on fastq file"
-	conda:
-		dirs_dict["ENVS_DIR"] + "/QC.yaml"
-	shell:
-		"""
-		echo $(( $(grep -Ec "$" {input.fastq}) / 4 )) > {output.counts}
-		"""
+# rule countReads:
+# 	input:
+# 		fastq="{fastq_name}.fastq",
+# 	output:
+# 		counts="{fastq_name}_read_count.txt",
+# 	message:
+# 		"Counting reads on fastq file"
+# 	conda:
+# 		dirs_dict["ENVS_DIR"] + "/QC.yaml"
+# 	shell:
+# 		"""
+# 		echo $(( $(grep -Ec "$" {input.fastq}) / 4 )) > {output.counts}
+# 		"""
 
 rule fastQC_pre:
 	input:
