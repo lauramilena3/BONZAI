@@ -16,7 +16,9 @@ rule getKrakenTools:
 
 rule downloadminiKrakenDB:
 	output:
-		kraken_db=directory(config['kraken_db']),
+		minikraken_db="db/KRAKEN/minikraken_8GB_202003",
+	params:
+		db_dir=dirs_dict["DB_DIR"] 
 	message:
 		"Downloading miniKraken database"
 	threads: 4
@@ -25,6 +27,27 @@ rule downloadminiKrakenDB:
 	shell:
 		"""
 		wget ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/minikraken_8GB_202003.tgz
-		mkdir {output.kraken_db}
-		tar -xvf minikraken_8GB_202003.tgz -C {output.kraken_db}
+		mkdir -p {params.db_dir}
+		tar -xvf minikraken_8GB_202003.tgz -C {params.db_dir}
+		"""
+
+rule download_reference_genomes:
+	output:
+		contaminant_fasta=dirs_dict["GENOMES_DIR"] +"/{contaminant}.fasta",
+		contaminant_dir=temp(directory(dirs_dict["GENOMES_DIR"] +"/temp_{contaminant}")),
+	message:
+		"Downloading reference genomes"
+	params:
+		contaminants_dir=dirs_dict["GENOMES_DIR"],
+	conda:
+		dirs_dict["ENVS_DIR"]+ "/env1.yaml",
+	threads:
+		16
+	shell:
+		"""
+		mkdir {output.contaminant_dir}
+		cd {output.contaminant_dir}
+		wget $(esearch -db "assembly" -query {wildcards.contaminant} | esummary | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F"/" '{{print $0"/"$NF"_genomic.fna.gz"}}')
+		gunzip -f *gz
+		cat *fna >> {output.contaminant_fasta}
 		"""
