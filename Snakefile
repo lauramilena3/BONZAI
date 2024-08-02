@@ -65,7 +65,7 @@ def inputQC(wildcards):
 	inputs.append(dirs_dict["QC_DIR"]+ "/postQC_illumina_report.html")
 	inputs.append(dirs_dict["QC_DIR"]+ "/pre_decontamination_kraken_multiqc_report.html")
 	inputs.append(dirs_dict["QC_DIR"]+ "/post_decontamination_kraken_multiqc_report.html")
-	inputs.extend(expand(dirs_dict["QC_DIR"] + "/{sample}_stats_pcr_duplicates.log", sample=SAMPLES)),
+	# inputs.append(dirs_dict["PLOTS_DIR"] + "/01_kmer_rarefraction_plot.tot.png")
 	return inputs
 
 
