@@ -1,21 +1,21 @@
 rule download_reference_genomes:
 	output:
-		contaminant_fasta=dirs_dict["GENOMES_DIR"] +"/{reference_genome}.fasta",
-		contaminant_dir=temp(directory(dirs_dict["GENOMES_DIR"] +"/temp_{reference_genome}")),
+		reference_fasta=dirs_dict["GENOMES_DIR"] +"/{reference_genome}.fasta",
+		reference_dir=temp(directory(dirs_dict["GENOMES_DIR"] +"/temp_{reference_genome}")),
 	message:
 		"Downloading reference genomes"
 	params:
-		contaminants_dir=dirs_dict["GENOMES_DIR"],
+		reference_dir=dirs_dict["GENOMES_DIR"],
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/env1.yaml",
 	threads: 16
 	shell:
 		"""
-		mkdir {output.contaminant_dir}
-		cd {output.contaminant_dir}
-		wget $(esearch -db "assembly" -query {wildcards.contaminant} | esummary | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F"/" '{{print $0"/"$NF"_genomic.fna.gz"}}')
+		mkdir {output.reference_dir}
+		cd {output.reference_dir}
+		wget $(esearch -db "assembly" -query {wildcards.reference_genome} | esummary | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F"/" '{{print $0"/"$NF"_genomic.fna.gz"}}')
 		gunzip -f *gz
-		cat *fna >> {output.contaminant_fasta}
+		cat *fna >> {output.reference_fasta}
 		"""
 
 rule genome_Index_fasta:
