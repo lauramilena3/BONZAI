@@ -28,7 +28,7 @@ rule genome_Index_fasta:
 	message:
 		"Indexing genome with HISAT2"
 	conda:
-		dirs_dict["ENVS_DIR"] + "/mapping.yaml"
+		dirs_dict["ENVS_DIR"] + "/env1.yaml"
     threads: 8
 	shell:
 		"""
@@ -47,7 +47,7 @@ rule map_reads_to_index:
 	message:
 		"Indexing genome with HISAT2"
 	conda:
-		dirs_dict["ENVS_DIR"] + "/mapping.yaml"
+		dirs_dict["ENVS_DIR"] + "/env1.yaml"
     threads: 16
 	shell:
 		"""

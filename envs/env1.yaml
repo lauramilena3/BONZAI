@@ -33,3 +33,4 @@ dependencies:
   - biopython =1.79
   - spacepharer =5.c2e680a
   - coverm =0.6.1
+  - hisat2

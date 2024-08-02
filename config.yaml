@@ -15,3 +15,5 @@ adapters_file: "adapters.fa"
 
 kraken_db: "db/KRAKEN/minikraken_8GB_20200312"
 kraken_tools: "tools/KrakenTools"
+
+reference_acc_list:
