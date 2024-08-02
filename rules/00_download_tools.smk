@@ -16,7 +16,7 @@ rule getKrakenTools:
 
 rule downloadminiKrakenDB:
 	output:
-		minikraken_db=directory("db/KRAKEN/minikraken_8GB_202003"),
+		minikraken_db=directory("db/KRAKEN/minikraken_8GB_20200312"),
 		minikraken_gz=temp("minikraken_8GB_202003.tgz"),
 	params:
 		db_dir="db/KRAKEN/"
