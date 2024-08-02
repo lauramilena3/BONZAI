@@ -42,6 +42,8 @@ rule map_reads_to_index:
 		reverse_paired=dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean.fastq.gz",
 	output:
 		sam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}.sam",
+   wildcard_constraints:
+      genome_name="[A-Z]+_[0-9]+\.[0-9]"
 	params:
 		genome="{genome_name}" 
 	message:
