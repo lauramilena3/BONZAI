@@ -175,9 +175,6 @@ rule remove_contaminants:
 		kraken_report_unpaired=(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_kraken2_report_unpaired.csv"),
 		kraken_tools=(config['kraken_tools']),
 	output:
-		forward_paired=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_clean.fastq"),
-		reverse_paired=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean.fastq"),
-		unpaired=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_clean.fastq"),
 		forward_paired_gz=(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_clean.fastq.gz"),
 		reverse_paired_gz=(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean.fastq.gz"),
 		unpaired_gz=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_clean.fastq.gz"),
@@ -186,6 +183,9 @@ rule remove_contaminants:
 	params:
 		# unclassified_name_paired=dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_kraken_paired_R#.fastq",
 		host_taxid="2 10239 40674"
+		forward_paired=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_clean.fastq"),
+		reverse_paired=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean.fastq"),
+		unpaired=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_clean.fastq"),
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/env1.yaml"
 	threads: 4
@@ -197,14 +197,14 @@ rule remove_contaminants:
 		"""
 		python {input.kraken_tools}/extract_kraken_reads.py -k {input.kraken_output_paired} \
 			-s1 {input.forward_paired} -s2 {input.reverse_paired} \
-			-o {output.forward_paired} -o2 {output.reverse_paired} \
+			-o {params.forward_paired} -o2 {params.reverse_paired} \
 			--exclude --taxid {params.host_taxid} --include-children -r {input.kraken_report_paired} --fastq-output
 		python {input.kraken_tools}/extract_kraken_reads.py -k {input.kraken_output_unpaired} \
-			-s {input.merged_unpaired} -o {output.unpaired} --exclude --taxid {params.host_taxid} --include-children \
+			-s {input.merged_unpaired} -o {params.unpaired} --exclude --taxid {params.host_taxid} --include-children \
 			-r {input.kraken_report_unpaired} --fastq-output
-		gzip {output.forward_paired}
-		gzip {output.reverse_paired}
-		gzip {output.unpaired}
+		gzip {params.forward_paired}
+		gzip {params.reverse_paired}
+		gzip {params.unpaired}
 		"""
 
 rule contaminants_KRAKEN_clean:
