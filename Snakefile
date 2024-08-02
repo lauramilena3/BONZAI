@@ -72,7 +72,7 @@ def inputQC(wildcards):
 
 def inputMapping(wildcards):
 	inputs=[]
-	inputs.extend(expand(dirs_dict["MAPPING_DIR"] + "/{reference_genome}_{sample}.sam", sample=SAMPLES, reference_genome=REFERENCE_GENOME_ACC)),
+	inputs.extend(expand(dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}.sam", sample=SAMPLES, reference_genome=REFERENCE_GENOME_ACC)),
 	# inputs.append(dirs_dict["PLOTS_DIR"] + "/01_kmer_rarefraction_plot.tot.png")
 	return inputs
 
