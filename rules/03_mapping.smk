@@ -29,7 +29,7 @@ rule genome_Index_fasta:
 		"Indexing genome with HISAT2"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env1.yaml"
-	 threads: 8
+	threads: 8
 	shell:
 		"""
 		hisat2-build -p {threads} {input.genome} {params.genome_name}
