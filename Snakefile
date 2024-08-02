@@ -33,6 +33,8 @@ dirs_dict = dict(zip(dir_list, dir_names))
 
 READ_TYPES=[config['forward_tag'],config['reverse_tag']]
 
+REFERENCE_GENOME_ACC=config['reference_acc_list'].split()
+
 print("Input Directory")
 print(RAW_DATA_DIR)
 
@@ -68,13 +70,18 @@ def inputQC(wildcards):
 	# inputs.append(dirs_dict["PLOTS_DIR"] + "/01_kmer_rarefraction_plot.tot.png")
 	return inputs
 
+def inputMapping(wildcards):
+	inputs=[]
+	inputs.extend(expand(dirs_dict["MAPPING_DIR"] + "/{reference_genome}_{sample}.sam", sample=SAMPLES, reference_genome=REFERENCE_GENOME_ACC)),
+	# inputs.append(dirs_dict["PLOTS_DIR"] + "/01_kmer_rarefraction_plot.tot.png")
+	return inputs
 
 rule all:
 	input:
 		inputReadsCount,
 		inputQC,
 		# inputAssembly,
-		# inputMapping,
+		inputMapping,
 		# inputTranscriptomeAssembly,
 		# inputAnnotation,
 		# inputAbundance,
@@ -83,7 +90,7 @@ rule all:
 include: os.path.join(dirs_dict["RULES_DIR"], '00_download_tools.smk')
 include: os.path.join(dirs_dict["RULES_DIR"], '01_quality_control.smk')
 # include: os.path.join(dirs_dict["RULES_DIR"], '02_assembly.smk')
-# include: os.path.join(dirs_dict["RULES_DIR"], '03_mapping.smk')
+include: os.path.join(dirs_dict["RULES_DIR"], '03_mapping.smk')
 # include: os.path.join(dirs_dict["RULES_DIR"], '04_transcriptome_assembly.smk')
 # include: os.path.join(dirs_dict["RULES_DIR"], '05_annotation.smk')
 # include: os.path.join(dirs_dict["RULES_DIR"], '06_gene_expression.smk')
