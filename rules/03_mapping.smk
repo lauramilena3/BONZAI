@@ -15,7 +15,7 @@ rule download_reference_genomes:
 		"""
 		echo {params.reference_genome} > {output.txt_acc}
 		bit-dl-ncbi-assemblies -w {output.txt_acc} -f fasta
-		gunzip {output.fasta_temp}
+		gunzip {params.fasta_gz}
 		mv {params.fasta_temp} {output.reference_fasta}
 		"""
 
