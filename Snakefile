@@ -48,6 +48,10 @@ print(len(SAMPLES))
 print("Read Types")
 print(READ_TYPES)
 
+print("Reference Genomes")
+print(REFERENCE_GENOME_ACC)
+# ----------------------------------------------------------------------------
+
 def inputReadsCount(wildcards):
 # Read counts
 	inputs=[]

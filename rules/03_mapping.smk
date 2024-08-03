@@ -43,7 +43,7 @@ rule map_reads_to_index:
 	output:
 		sam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}.sam",
 	wildcard_constraints:
-		genome_name="[A-Z]+_[0-9]+\.[0-9]"
+		genome_name="[A-Z]+_[0-9]+.[0-9]"
 	params:
 		genome="{genome_name}" 
 	message:
