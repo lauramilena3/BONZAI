@@ -3,6 +3,7 @@ channels:
   - agbiome
   - bioconda
   - biobuilds
+  - astrobiomike
 dependencies:
   - java-jdk =8.0.92
   - python = 3.7.3
@@ -34,3 +35,4 @@ dependencies:
   - spacepharer =5.c2e680a
   - coverm =0.6.1
   - hisat2
+  - bit
