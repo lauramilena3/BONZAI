@@ -2,7 +2,7 @@ rule download_reference_genomes:
 	output:
 		reference_fasta=dirs_dict["GENOMES_DIR"] +"/{reference_genome}.fasta",
 		txt_acc=temp((dirs_dict["GENOMES_DIR"] +"/{reference_genome}.txt")),
-      fasta_temp=("{reference_genome}.fa"),
+		fasta_temp=("{reference_genome}.fa"),
 	message:
 		"Downloading reference genomes"
 	params:
@@ -13,10 +13,10 @@ rule download_reference_genomes:
 	threads: 16
 	shell:
 		"""
-      echo {params.reference_genome} > {output.txt_acc}
-      bit-dl-ncbi-assemblies -w {output.txt_acc} -f fasta
-      gunzip {output.fasta_temp}
-      mv {output.fasta_temp} {output.reference_fasta}
+		echo {params.reference_genome} > {output.txt_acc}
+		bit-dl-ncbi-assemblies -w {output.txt_acc} -f fasta
+		gunzip {output.fasta_temp}
+		mv {output.fasta_temp} {output.reference_fasta}
 		"""
 
 rule genome_Index_fasta:
