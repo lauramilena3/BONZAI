@@ -1,21 +1,22 @@
 rule download_reference_genomes:
 	output:
 		reference_fasta=dirs_dict["GENOMES_DIR"] +"/{reference_genome}.fasta",
-		reference_dir=temp(directory(dirs_dict["GENOMES_DIR"] +"/temp_{reference_genome}")),
+		txt_acc=temp((dirs_dict["GENOMES_DIR"] +"/{reference_genome}.txt")),
+      fasta_temp=("{reference_genome}.fa"),
 	message:
 		"Downloading reference genomes"
 	params:
-		reference_dir=dirs_dict["GENOMES_DIR"],
+		reference_genome="{reference_genome}",
+		fasta_gz=("{reference_genome}.fa.gz"),
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/env1.yaml",
 	threads: 16
 	shell:
 		"""
-		mkdir {output.reference_dir}
-		cd {output.reference_dir}
-		wget $(esearch -db "assembly" -query {wildcards.reference_genome} | esummary | xtract -pattern DocumentSummary -element FtpPath_RefSeq | awk -F"/" '{{print $0"/"$NF"_genomic.fna.gz"}}')
-		gunzip -f *gz
-		cat *fna >> {output.reference_fasta}
+      echo {params.reference_genome} > {output.txt_acc}
+      bit-dl-ncbi-assemblies -w {output.txt_acc} -f fasta
+      gunzip {output.fasta_temp}
+      mv {output.fasta_temp} {output.reference_fasta}
 		"""
 
 rule genome_Index_fasta:
