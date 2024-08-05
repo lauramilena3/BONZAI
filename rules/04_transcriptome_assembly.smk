@@ -10,10 +10,11 @@ rule transcriptome_assembly_bam:
 		"Transcriptome assembly with Stringtie2"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
-	threads: 16
+	resources:
+		cpus_per_task= 16,
 	shell:
 		"""
-		stringtie {input.sorted_bam} -p {threads} -o {output.gtf_file} -A {output.gene_abundance}
+		stringtie {input.sorted_bam} -p {resources.cpus_per_task} -o {output.gtf_file} -A {output.gene_abundance}
 		"""
 
 rule convert_to_gff3:
@@ -30,10 +31,11 @@ rule convert_to_gff3:
 		"Merging gtf files to ggf3 to generate transcript file"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
-	threads: 4
+	resources:
+		cpus_per_task= 4,
 	shell:
 		"""
-		stringtie -p {threads} --merge {input.gtf_files} -o {output.gtf_merged}	
+		stringtie -p {resources.cpus_per_task} --merge {input.gtf_files} -o {output.gtf_merged}	
 		gffread {output.gtf_merged} -o {output.gff3_file} 
 		gffread {output.gff3_file} -g {input.reference_fasta} -w {output.transcript_file}
 		"""
@@ -56,7 +58,6 @@ rule candidate_coding_regions:
 		"Getting coding regions with Transdecoder"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
-	threads: 1
 	shell:
 		"""
 		TransDecoder.LongOrfs -t {input.transcript_file} --output_dir {params.transcriptome_assembly_dir} -m {params.min_aa_length}
@@ -74,7 +75,6 @@ rule dereplication_cd_hit:
 		"Dereplication of the pep files with CD-HIT"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
-	threads: 1
 	shell:
 		"""
 		cd-hit -i {input.pep_file} -o {output.pep_cdhit} -c 0.98 -n 5 -M 0 -T 0
@@ -92,7 +92,6 @@ rule dereplication_cd_hit_est:
 		"Dereplication of the pep files with CD-HIT-EST"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
-	threads: 1
 	shell:
 		"""
 		cd-hit-est -i {input.cds_file} -o {output.cds_cdhit} -c 1.0 -n 8 -M 0 -T 0

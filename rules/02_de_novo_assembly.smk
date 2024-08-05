@@ -10,14 +10,15 @@ rule de_novo_assembly:
 		trinity_dir=dirs_dict["ASSEMBLY_DIR"] + "/{sample}_trinity",
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
-	threads: 16
+	resources:
 	benchmark:
 		dirs_dict["BENCHMARKS"] +"/deNovoAssembly/{sample}_denovo_assembly.tsv"
 	resources:
 		mem_gb=100,
 		runtime= 60, # minutes
+		cpus_per_task= 8,
 	shell:
 		"""
 		# jellyfish count -o {output.jellyfish_count}
-		Trinity --seqType fq --left {input.forward_paired}  --right {input.reverse_paired}  --output {params.trinity_dir} --max_memory {resources.mem_gb}G --full_cleanup --CPU {threads}
+		Trinity --seqType fq --left {input.forward_paired}  --right {input.reverse_paired}  --output {params.trinity_dir} --max_memory {resources.mem_gb}G --full_cleanup --CPU {resources.cpus_per_task}
 		"""

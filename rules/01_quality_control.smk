@@ -7,7 +7,6 @@ rule countReads_gz:
 		"Counting reads on fastq.gz file"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/QC.yaml"
-	threads: 1
 	shell:
 		"""
 		echo $(( $(zgrep -Ec "$" {input.fastq}) / 4 )) > {output.counts}
@@ -23,7 +22,6 @@ rule fastQC_pre:
 		"Performing fastqQC statistics"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/QC.yaml"
-	threads: 1
 	benchmark:
 		dirs_dict["BENCHMARKS"] +"/01_QC/{fastq_name}_pre_qc.tsv"
 	shell:
@@ -41,7 +39,6 @@ rule fastQC_post:
 		"Performing fastqQC statistics"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/QC.yaml"
-	threads: 1
 	benchmark:
 		dirs_dict["BENCHMARKS"] +"/01_QC/{fastq_name}_post_qc.tsv"
 	shell:
@@ -63,7 +60,6 @@ rule preMultiQC:
 		"Generating MultiQC report"
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/QC.yaml"
-	threads: 1
 	benchmark:
 		dirs_dict["BENCHMARKS"] +"/01_QC/multiqc_pre.tsv"
 	shell:
@@ -87,7 +83,6 @@ rule postMultiQC:
 		"Generating MultiQC report"
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/QC.yaml"
-	threads: 1
 	benchmark:
 		dirs_dict["BENCHMARKS"] +"/01_QC/multiqc_post.tsv"
 	shell:
@@ -144,14 +139,15 @@ rule contaminants_KRAKEN:
 		dirs_dict["ENVS_DIR"] + "/env1.yaml"
 	benchmark:
 		dirs_dict["BENCHMARKS"] +"/01_QC/kraken_{sample}_preliminary.tsv"
-	threads: 8
+	resources:
+		cpus_per_task= 8,
 	shell:
 		"""
-		kraken2 --db {params.kraken_db} --threads {threads} \
+		kraken2 --db {params.kraken_db} --threads {resources.cpus_per_task} \
 			--paired {input.forward_paired} {input.reverse_paired} \
 			--output {output.kraken_output_paired} --report {output.kraken_report_paired}
 		#UNPAIRED
-		kraken2 --db {params.kraken_db} --threads {threads} {input.merged_unpaired}  \
+		kraken2 --db {params.kraken_db} --threads {resources.cpus_per_task} {input.merged_unpaired}  \
 			--output {output.kraken_output_unpaired} --report {output.kraken_report_unpaired}
 		"""
 
@@ -179,7 +175,6 @@ rule remove_contaminants:
 		unpaired=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_clean.fastq"),
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/env1.yaml"
-	threads: 4
 	benchmark:
 		dirs_dict["BENCHMARKS"] +"/01_QC/kraken_{sample}_contaminant_removal.tsv"
 	resources:
@@ -216,10 +211,12 @@ rule contaminants_KRAKEN_clean:
 		dirs_dict["ENVS_DIR"] + "/env1.yaml"
 	benchmark:
 		dirs_dict["BENCHMARKS"] +"/01_QC/kraken_{sample}_clean.tsv"
-	threads: 8
+	resources:
+		cpus_per_task= 8,
+		mam_gb=10
 	shell:
 		"""
-		kraken2 --db {params.kraken_db} --threads {threads} \
+		kraken2 --db {params.kraken_db} --threads {resources.cpus_per_task} \
 			--paired {input.forward_paired} {input.reverse_paired} \
 			--output {output.kraken_output_paired} --report {output.kraken_report_paired} \
 			--report-minimizer-data
@@ -239,7 +236,6 @@ rule prekrakenMultiQC:
 		"Generating MultiQC report kraken (pre QC)"
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/QC.yaml"
-	threads: 1
 	benchmark:
 		dirs_dict["BENCHMARKS"] +"/01_QC/multiqc_kraken_pre.tsv"
 	shell:
@@ -258,7 +254,6 @@ rule postkrakenMultiQC:
 		multiqc_dir=dirs_dict["QC_DIR"]
 	message:
 		"Generating MultiQC report kraken (post QC)"
-	threads: 1
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/QC.yaml"
 	benchmark:
@@ -279,7 +274,6 @@ rule superDeduper_pcr:
 		"Detect PCR duplicates"
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/QC.yaml"
-	threads: 1
 	benchmark:
 		dirs_dict["BENCHMARKS"] +"/01_QC/{sample}_pcr_duplicates.tsv"
 	shell:

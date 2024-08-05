@@ -3,7 +3,6 @@ rule getKrakenTools:
 		kraken_tools=directory(config['kraken_tools']),
 	message:
 		"Downloading KrakenTools"
-	threads: 4
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env4.yaml"
 	shell:
@@ -22,7 +21,6 @@ rule downloadminiKrakenDB:
 		db_dir="db/KRAKEN/"
 	message:
 		"Downloading miniKraken database"
-	threads: 4
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env4.yaml"
 	shell:

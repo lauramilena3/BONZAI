@@ -12,7 +12,6 @@ rule download_reference_genomes:
 		dirs_dict["BENCHMARKS"] +"/03_mapping/download_reference_{reference_genome}.tsv"
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/env1.yaml",
-	threads: 1
 	shell:
 		"""
 		echo {params.reference_genome} > {output.txt_acc}
@@ -34,10 +33,11 @@ rule genome_Index_fasta:
 		"Indexing genome with HISAT2"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env1.yaml"
-	threads: 8
+	resources:
+		cpus_per_task= 8,
 	shell:
 		"""
-		hisat2-build -p {threads} {input.genome} {params.reference_genome}
+		hisat2-build -p {resources.cpus_per_task} {input.genome} {params.reference_genome}
 		"""
 
 rule map_reads_to_index:
@@ -60,12 +60,13 @@ rule map_reads_to_index:
 		"Mapping reads to reference genomes with HISAT2"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env1.yaml"
-	threads: 16
+	resources:
+		cpus_per_task= 16,
 	shell:
 		"""
-		hisat2 --dta -p {threads} -x {params.genome} -1 {input.forward_paired} -2 {input.reverse_paired} -S {output.sam}
-      	samtools view  -@ {threads} -bS {output.sam}  > {output.bam} 
-		samtools sort -@ {threads} {output.bam} -o {output.sorted_bam}
+		hisat2 --dta -p {resources.cpus_per_task} -x {params.genome} -1 {input.forward_paired} -2 {input.reverse_paired} -S {output.sam}
+      	samtools view  -@ {resources.cpus_per_task} -bS {output.sam}  > {output.bam} 
+		samtools sort -@ {resources.cpus_per_task} {output.bam} -o {output.sorted_bam}
 		samtools index {output.sorted_bam}
 		samtools flagstat {output.sorted_bam} > {output.flagstats}
 		"""
