@@ -1,5 +1,5 @@
 default-resources:
-    slurm_partition: node
+    slurm_partition: core
     slurm_account: naiss2023-5-461
     runtime: 30
     mem_mb: 1000
