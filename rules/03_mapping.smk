@@ -45,7 +45,7 @@ rule map_reads_to_index:
 		sam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}.sam",
 		bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}.bam",
 		sorted_bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}_sorted.bam",
-		sorted_bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}_flagstats.txt",
+		flagstats=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}_flagstats.txt",
 
 	wildcard_constraints:
 		genome_name="[A-Z]+_[0-9]+.[0-9]"
