@@ -8,6 +8,8 @@ rule download_reference_genomes:
 		reference_genome="{reference_genome}",
 		fasta_gz=("{reference_genome}.fa.gz"),
 		fasta_temp=("{reference_genome}.fa"),
+	benchmark:
+		dirs_dict["BENCHMARKS"] +"/03_mapping/download_reference_{reference_genome}.tsv"
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/env1.yaml",
 	threads: 1
@@ -21,11 +23,13 @@ rule download_reference_genomes:
 
 rule genome_Index_fasta:
 	input:
-		genome="{genome_name}.fasta",
+		genome="{reference_genome}.fasta",
 	output:
-		index="{genome_name}.1.ht2",
+		index="{reference_genome}.1.ht2",
 	params:
-		genome_name="{genome_name}" 
+		reference_genome="{reference_genome}" 
+	benchmark:
+		dirs_dict["BENCHMARKS"] +"/03_mapping/index_reference_{reference_genome}.tsv"
 	message:
 		"Indexing genome with HISAT2"
 	conda:
@@ -33,24 +37,25 @@ rule genome_Index_fasta:
 	threads: 8
 	shell:
 		"""
-		hisat2-build -p {threads} {input.genome} {params.genome_name}
+		hisat2-build -p {threads} {input.genome} {params.reference_genome}
 		"""
 
 rule map_reads_to_index:
 	input:
-		index=dirs_dict["GENOMES_DIR"] +"/{genome_name}.1.ht2", 
+		index=dirs_dict["GENOMES_DIR"] +"/{reference_genome}.1.ht2", 
 		forward_paired=dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_clean.fastq.gz",
 		reverse_paired=dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean.fastq.gz",
 	output:
-		sam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}.sam",
-		bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}.bam",
-		sorted_bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}_sorted.bam",
-		flagstats=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}_flagstats.txt",
-
+		sam=dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}.sam",
+		bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}.bam",
+		sorted_bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}_sorted.bam",
+		flagstats=dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}_flagstats.txt",
+	benchmark:
+		dirs_dict["BENCHMARKS"] +"/03_mapping/map_reads_to_index_{sample}_{reference_genome}.tsv"
 	wildcard_constraints:
-		genome_name="[A-Z]+_[0-9]+.[0-9]"
+		reference_genome="[A-Z]+_[0-9]+.[0-9]"
 	params:
-		genome=dirs_dict["GENOMES_DIR"] +"/{genome_name}",
+		genome=dirs_dict["GENOMES_DIR"] +"/{reference_genome}",
 	message:
 		"Mapping reads to reference genomes with HISAT2"
 	conda:

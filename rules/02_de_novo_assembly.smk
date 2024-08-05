@@ -11,8 +11,11 @@ rule de_novo_assembly:
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
 	threads: 16
+	benchmark:
+		dirs_dict["BENCHMARKS"] +"/deNovoAssembly/{sample}_denovo_assembly.tsv"
 	resources:
 		mem_gb=100
+		runtime= 60 # minutes
 	shell:
 		"""
 		# jellyfish count -o {output.jellyfish_count}

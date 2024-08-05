@@ -7,25 +7,12 @@ rule countReads_gz:
 		"Counting reads on fastq.gz file"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/QC.yaml"
+	threads: 1
 	shell:
 		"""
 		echo $(( $(zgrep -Ec "$" {input.fastq}) / 4 )) > {output.counts}
 		"""
-
-# rule countReads:
-# 	input:
-# 		fastq="{fastq_name}.fastq",
-# 	output:
-# 		counts="{fastq_name}_read_count.txt",
-# 	message:
-# 		"Counting reads on fastq file"
-# 	conda:
-# 		dirs_dict["ENVS_DIR"] + "/QC.yaml"
-# 	shell:
-# 		"""
-# 		echo $(( $(grep -Ec "$" {input.fastq}) / 4 )) > {output.counts}
-# 		"""
-
+		
 rule fastQC_pre:
 	input:
 		raw_fastq=dirs_dict["RAW_DATA_DIR"] + "/{fastq_name}.fastq.gz"
@@ -36,8 +23,9 @@ rule fastQC_pre:
 		"Performing fastqQC statistics"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/QC.yaml"
+	threads: 1
 	benchmark:
-		dirs_dict["BENCHMARKS"] +"/qualityCheckIllumina/{fastq_name}_pre_qc.tsv"
+		dirs_dict["BENCHMARKS"] +"/01_QC/{fastq_name}_pre_qc.tsv"
 	shell:
 		"""
 		fastqc {input}
@@ -53,8 +41,9 @@ rule fastQC_post:
 		"Performing fastqQC statistics"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/QC.yaml"
+	threads: 1
 	benchmark:
-		dirs_dict["BENCHMARKS"] +"/qualityCheckIllumina/{fastq_name}_post_qc.tsv"
+		dirs_dict["BENCHMARKS"] +"/01_QC/{fastq_name}_post_qc.tsv"
 	shell:
 		"""
 		fastqc {input}
@@ -74,8 +63,9 @@ rule preMultiQC:
 		"Generating MultiQC report"
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/QC.yaml"
+	threads: 1
 	benchmark:
-		dirs_dict["BENCHMARKS"] +"/multiQC/multiqc_pre.tsv"
+		dirs_dict["BENCHMARKS"] +"/01_QC/multiqc_pre.tsv"
 	shell:
 		"""
 		multiqc -f {params.fastqc_dir} -o {params.multiqc_dir} -n {params.html_name}
@@ -97,9 +87,9 @@ rule postMultiQC:
 		"Generating MultiQC report"
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/QC.yaml"
-	priority: 1
+	threads: 1
 	benchmark:
-		dirs_dict["BENCHMARKS"] +"/multiQC/multiqc_post.tsv"
+		dirs_dict["BENCHMARKS"] +"/01_QC/multiqc_post.tsv"
 	shell:
 		"""
 		multiqc -f {params.fastqc_dir}/*zip -o {params.multiqc_dir} -n {params.html_name}
@@ -122,7 +112,7 @@ rule trim_adapters_quality_illumina_PE:
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/env1.yaml"
 	benchmark:
-		dirs_dict["BENCHMARKS"] +"/trim_adapters_quality_illumina_PE/{sample}.tsv"
+		dirs_dict["BENCHMARKS"] +"/01_QC/trim_adapters_quality_illumina_PE_{sample}.tsv"
 	threads: 8
 	shell:
 		"""
@@ -152,7 +142,7 @@ rule contaminants_KRAKEN:
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env1.yaml"
 	benchmark:
-		dirs_dict["BENCHMARKS"] +"/kraken/{sample}_preliminary.tsv"
+		dirs_dict["BENCHMARKS"] +"/01_QC/kraken_{sample}_preliminary.tsv"
 	threads: 8
 	shell:
 		"""
@@ -190,7 +180,7 @@ rule remove_contaminants:
 		dirs_dict["ENVS_DIR"]+ "/env1.yaml"
 	threads: 4
 	benchmark:
-		dirs_dict["BENCHMARKS"] +"/kraken/{sample}_contaminant_removal.tsv"
+		dirs_dict["BENCHMARKS"] +"/01_QC/kraken_{sample}_contaminant_removal.tsv"
 	resources:
 		mem_gb=40
 	shell:
@@ -224,8 +214,7 @@ rule contaminants_KRAKEN_clean:
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env1.yaml"
 	benchmark:
-		dirs_dict["BENCHMARKS"] +"/kraken/{sample}_clean.tsv"
-	priority: 1
+		dirs_dict["BENCHMARKS"] +"/01_QC/kraken_{sample}_clean.tsv"
 	threads: 8
 	shell:
 		"""
@@ -247,11 +236,11 @@ rule prekrakenMultiQC:
 		multiqc_dir=dirs_dict["QC_DIR"]
 	message:
 		"Generating MultiQC report kraken (pre QC)"
-	priority: 1
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/QC.yaml"
+	threads: 1
 	benchmark:
-		dirs_dict["BENCHMARKS"] +"/multiQC/multiqc_kraken_pre.tsv"
+		dirs_dict["BENCHMARKS"] +"/01_QC/multiqc_kraken_pre.tsv"
 	shell:
 		"""
 		multiqc -f {input} -o {params.multiqc_dir} -n {params.html_name}
@@ -268,11 +257,11 @@ rule postkrakenMultiQC:
 		multiqc_dir=dirs_dict["QC_DIR"]
 	message:
 		"Generating MultiQC report kraken (post QC)"
-	priority: 1
+	threads: 1
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/QC.yaml"
 	benchmark:
-		dirs_dict["BENCHMARKS"] +"/multiQC/multiqc_kraken_post.tsv"
+		dirs_dict["BENCHMARKS"] +"/01_QC/multiqc_kraken_post.tsv"
 	shell:
 		"""
 		multiqc -f {input} -o {params.multiqc_dir} -n {params.html_name}
@@ -289,8 +278,9 @@ rule superDeduper_pcr:
 		"Detect PCR duplicates"
 	conda:
 		dirs_dict["ENVS_DIR"]+ "/QC.yaml"
+	threads: 1
 	benchmark:
-		dirs_dict["BENCHMARKS"] +"/SuperDeduper/{sample}_pcr_duplicates.tsv"
+		dirs_dict["BENCHMARKS"] +"/01_QC/{sample}_pcr_duplicates.tsv"
 	shell:
 		"""
 		hts_SuperDeduper -L {output.duplicate_stats} -1 {input.forward_file} -2 {input.reverse_file} > {output.deduplicate}

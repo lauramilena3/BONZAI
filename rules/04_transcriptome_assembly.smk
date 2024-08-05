@@ -4,6 +4,8 @@ rule transcriptome_assembly_bam:
 	output:
 		gtf_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/{sample}_{reference_genome}.gtf",
 		gene_abundance=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/{sample}_{reference_genome}_gene_abundances.txt"
+	benchmark:
+		dirs_dict["BENCHMARKS"] +"/transcriptomeAssembly/{sample}_{reference_genome}_transcriptome_assembly.tsv"
 	message:
 		"Transcriptome assembly with Stringtie2"
 	conda:
@@ -22,6 +24,8 @@ rule convert_to_gff3:
 		gtf_merged=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.gtf",
 		gff3_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.gff3",
 		transcript_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/merged_{reference_genome}_transcript.fasta"
+	benchmark:
+		dirs_dict["BENCHMARKS"] +"/transcriptomeAssembly/{reference_genome}_convert_to_gff3.tsv"
 	message:
 		"Merging gtf files to ggf3 to generate transcript file"
 	conda:
@@ -46,6 +50,8 @@ rule candidate_coding_regions:
 	params:
 		transcriptome_assembly_dir=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"],
 		min_aa_length=200
+	benchmark:
+		dirs_dict["BENCHMARKS"] +"/transcriptomeAssembly/{reference_genome}_candidate_coding_regions.tsv"
 	message:
 		"Getting coding regions with Transdecoder"
 	conda:
@@ -62,6 +68,8 @@ rule dereplication_cd_hit:
 	output:
 		pep_cdhit=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_fasta",
 		pep_cdhit_clstr=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_fasta.clstr",
+	benchmark:
+		dirs_dict["BENCHMARKS"] +"/transcriptomeAssembly/{reference_genome}_dereplication_cd_hit.tsv"
 	message:
 		"Dereplication of the pep files with CD-HIT"
 	conda:
@@ -78,6 +86,8 @@ rule dereplication_cd_hit_est:
 	output:
 		cds_cdhit=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_est.fasta",
 		cds_cdhit_clstr=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_est.fasta.clstr",
+	benchmark:
+		dirs_dict["BENCHMARKS"] +"/transcriptomeAssembly/{reference_genome}_dereplication_cd_hit_est.tsv"
 	message:
 		"Dereplication of the pep files with CD-HIT-EST"
 	conda:
