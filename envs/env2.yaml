@@ -6,4 +6,7 @@ dependencies:
   - cufflinks =2.2.1
   - transdecoder =5.7.1
   - cd-hit =4.8.1
+  - trinity
+  - jellyfish
+  - Salmon
 
