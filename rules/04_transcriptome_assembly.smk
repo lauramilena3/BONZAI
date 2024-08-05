@@ -56,4 +56,20 @@ rule candidate_coding_regions:
 		TransDecoder.LongOrfs -t {input.transcript_file} --output_dir {params.transcriptome_assembly_dir} -m {params.min_aa_length}
 		TransDecoder.Predict -t {input.transcript_file} --output_dir {params.transcriptome_assembly_dir}
 		"""
-
+rule dereplication_cd_hit:
+	input:
+		pep_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.pep",
+		cds_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.cds",
+ 	output:
+		pep_cdhit=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_fasta.clstr",
+		cds_cdhit=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_est.fasta",
+	message:
+		"Dereplication of the cds and pep files with CD-HIT"
+	conda:
+		dirs_dict["ENVS_DIR"] + "/env2.yaml"
+	threads: 8
+	shell:
+		"""
+        cd-hit -i {input.pep_file} -o {output.pep_cdhit} -c 0.98 -n 5 -M 0 -T 0
+		cd-hit-est -i {input.ds_file} -o {output.cds_cdhit} -c 1.0 -n 8 -M 0 -T 0
+		"""
