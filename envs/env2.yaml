@@ -1,0 +1,9 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - stringtie
+  - cufflinks
+  - transdecoder
+  - cd-hit
+

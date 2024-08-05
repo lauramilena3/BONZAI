@@ -71,13 +71,16 @@ def inputQC(wildcards):
 	inputs.append(dirs_dict["QC_DIR"]+ "/postQC_illumina_report.html")
 	inputs.append(dirs_dict["QC_DIR"]+ "/pre_decontamination_kraken_multiqc_report.html")
 	inputs.append(dirs_dict["QC_DIR"]+ "/post_decontamination_kraken_multiqc_report.html")
-	# inputs.append(dirs_dict["PLOTS_DIR"] + "/01_kmer_rarefraction_plot.tot.png")
 	return inputs
 
 def inputMapping(wildcards):
 	inputs=[]
 	inputs.extend(expand(dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}.sam", sample=SAMPLES, reference_genome=REFERENCE_GENOME_ACC)),
-	# inputs.append(dirs_dict["PLOTS_DIR"] + "/01_kmer_rarefraction_plot.tot.png")
+	return inputs
+
+def inputTranscriptomeAssembly(wildcards):
+	inputs=[]
+	inputs.extend(expand(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/merged_{genome_name}_transcript.fasta" genome_name=REFERENCE_GENOME_ACC)),
 	return inputs
 
 rule all:
@@ -86,7 +89,7 @@ rule all:
 		inputQC,
 		# inputAssembly,
 		inputMapping,
-		# inputTranscriptomeAssembly,
+		inputTranscriptomeAssembly,
 		# inputAnnotation,
 		# inputAbundance,
 
