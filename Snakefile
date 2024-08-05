@@ -90,14 +90,14 @@ def inputDeNovoAssembly(wildcards):
 	inputs=[]
 	inputs.extend(expand(dirs_dict["ASSEMBLY_DIR"] + "/{sample}_trinity/{sample}.fasta", sample=SAMPLES)),
 	return inputs
-		
+
 rule all:
 	input:
 		inputReadsCount,
 		inputQC,
-		inputDeNovoAssembly,
-		inputMapping,
-		inputTranscriptomeAssembly,
+		# inputDeNovoAssembly,
+		# inputMapping,
+		# inputTranscriptomeAssembly,
 		# inputAnnotation,
 		# inputAbundance,
 
