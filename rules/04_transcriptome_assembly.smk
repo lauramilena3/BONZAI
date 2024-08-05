@@ -45,6 +45,7 @@ rule candidate_coding_regions:
 		dir_trans=directory(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder_dir"),
 	params:
 		transcriptome_assembly_dir=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"],
+		min_aa_length=200
 	message:
 		"Getting coding regions with Transdecoder"
 	conda:
@@ -52,9 +53,7 @@ rule candidate_coding_regions:
 	threads: 8
 	shell:
 		"""
-		mkdir -p {params.transcriptome_assembly_dir}
-		cd {params.transcriptome_assembly_dir}
-		TransDecoder.LongOrfs -t {input.transcript_file}
-		TransDecoder.Predict -t {input.transcript_file}
+		TransDecoder.LongOrfs -t {input.transcript_file} --output_dir {params.transcriptome_assembly_dir} -m {params.min_aa_length}
+		TransDecoder.Predict -t {input.transcript_file} --output_dir {params.transcriptome_assembly_dir}
 		"""
 
