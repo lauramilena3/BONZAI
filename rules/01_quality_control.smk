@@ -114,7 +114,7 @@ rule trim_adapters_quality_illumina_PE:
 	benchmark:
 		dirs_dict["BENCHMARKS"] +"/01_QC/trim_adapters_quality_illumina_PE_{sample}.tsv"
 	resources:
-		cpus_per_task: 8,
+		cpus_per_task= 8,
 	shell:
 		"""
 		trimmomatic PE -threads {resources.cpus_per_task} -phred33 {input.forward_file} {input.reverse_file} \
