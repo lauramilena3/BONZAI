@@ -11,7 +11,7 @@ rule transcriptome_assembly_bam:
 	threads: 8
 	shell:
 		"""
-		  stringtie {input.sorted_bam} -p {threads} -o {output.gtf_file} -A {output.gene_abundance}
+		stringtie {input.sorted_bam} -p {threads} -o {output.gtf_file} -A {output.gene_abundance}
 		"""
 
 rule convert_to_gff3:
@@ -29,20 +29,20 @@ rule convert_to_gff3:
 	threads: 8
 	shell:
 		"""
-		  stringtie --merge {input.gtf_files} -o {output.gtf_merged}	
-		  gffread {output.gtf_merged} -o {output.gff3_file} 
-		  gffread {output.gff3_file} -g {input.reference_fasta} -w {output.transcript_file}
+		stringtie --merge {input.gtf_files} -o {output.gtf_merged}	
+		gffread {output.gtf_merged} -o {output.gff3_file} 
+		gffread {output.gff3_file} -g {input.reference_fasta} -w {output.transcript_file}
 		"""
 
 rule candidate_coding_regions:
 	input:
 		transcript_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/merged_{reference_genome}_transcript.fasta",
 	output:
-        bed_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.bed",
+		bed_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.bed",
 		cds_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.cds",
-        gff3_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.gff3",
+		gff3_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.gff3",
 		pep_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.pep",
-        dir_trans=directory(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder_dir"),
+		dir_trans=directory(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder_dir"),
 	message:
 		"Getting coding regions with Transdecoder"
 	conda:
@@ -50,7 +50,7 @@ rule candidate_coding_regions:
 	threads: 8
 	shell:
 		"""
-        TransDecoder.LongOrfs -t {input.transcript_file}
-        TransDecoder.Predict -t {input.transcript_file}
+		TransDecoder.LongOrfs -t {input.transcript_file}
+		TransDecoder.Predict -t {input.transcript_file}
 		"""
 
