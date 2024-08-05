@@ -89,7 +89,7 @@ def inputTranscriptomeAssembly(wildcards):
 
 def inputDeNovoAssembly(wildcards):
 	inputs=[]
-	inputs.extend(expand(dirs_dict["ASSEMBLY_DIR"] + "/{sample}_trinity/{sample}.fasta", reference_genome=REFERENCE_GENOME_ACC)),
+	inputs.extend(expand(dirs_dict["ASSEMBLY_DIR"] + "/{sample}_trinity/{sample}.fasta", sample=SAMPLES)),
 		
 rule all:
 	input:
