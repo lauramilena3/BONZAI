@@ -43,13 +43,17 @@ rule candidate_coding_regions:
 		gff3_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.gff3",
 		pep_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.pep",
 		dir_trans=directory(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder_dir"),
-	message:
+	params:
+        transcriptome_assembly_dir=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"]
+    message:
 		"Getting coding regions with Transdecoder"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
 	threads: 8
 	shell:
 		"""
+        mkdir -p {params.transcriptome_assembly_dir}
+        cd {params.transcriptome_assembly_dir}
 		TransDecoder.LongOrfs -t {input.transcript_file}
 		TransDecoder.Predict -t {input.transcript_file}
 		"""
