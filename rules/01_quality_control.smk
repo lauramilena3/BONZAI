@@ -12,7 +12,7 @@ rule countReads_gz:
 		"""
 		echo $(( $(zgrep -Ec "$" {input.fastq}) / 4 )) > {output.counts}
 		"""
-		
+
 rule fastQC_pre:
 	input:
 		raw_fastq=dirs_dict["RAW_DATA_DIR"] + "/{fastq_name}.fastq.gz"
@@ -113,10 +113,11 @@ rule trim_adapters_quality_illumina_PE:
 		dirs_dict["ENVS_DIR"]+ "/env1.yaml"
 	benchmark:
 		dirs_dict["BENCHMARKS"] +"/01_QC/trim_adapters_quality_illumina_PE_{sample}.tsv"
-	threads: 8
+	resources:
+		cpus_per_task: 8,
 	shell:
 		"""
-		trimmomatic PE -threads {threads} -phred33 {input.forward_file} {input.reverse_file} \
+		trimmomatic PE -threads {resources.cpus_per_task} -phred33 {input.forward_file} {input.reverse_file} \
 			{output.forward_paired} {output.forward_unpaired} {output.reverse_paired} {output.reverse_unpaired} \
 			ILLUMINACLIP:{input.adapters}:2:30:10:1:true LEADING:{config[trimmomatic_leading]} TRAILING:{config[trimmomatic_trailing]} \
 			SLIDINGWINDOW:{config[trimmomatic_window_size]}:{config[trimmomatic_window_quality]} MINLEN:{config[trimmomatic_minlen]}
