@@ -1,10 +1,10 @@
 channels:
   - conda-forge
   - bioconda
-  - biobuilds
-  - agbiome
-  - asmeurer
-  - fastchan
+  # - biobuilds
+  # - agbiome
+  # - asmeurer
+  # - fastchan
 dependencies:
   - snakemake #=7.18.2
   - python 
@@ -15,12 +15,12 @@ dependencies:
   - mamba 
   - biopython 
   - singularity 
-  - ruamel.yaml 
-  - click
-  - tabulate 
+  # - ruamel.yaml 
+  # - click
+  # - tabulate 
   - scikit-bio 
   - jupyter 
   - jupyterlab_code_formatter
-  - lxml 
+  # - lxml 
   # - matplotlib-venn =0.11.9
   - snakemake-executor-plugin-slurm #=0.8.0
