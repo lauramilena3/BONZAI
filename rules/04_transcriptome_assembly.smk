@@ -3,7 +3,7 @@ rule transcriptome_assembly_bam:
 		sorted_bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}_sorted.bam",
 	output:
 		gtf_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/{sample}_{reference_genome}.gtf",
-		  gene_abundance=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/{sample}_{reference_genome}_gene_abundances.txt"
+		gene_abundance=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/{sample}_{reference_genome}_gene_abundances.txt"
 	message:
 		"Transcriptome assembly with Stringtie2"
 	conda:
@@ -34,18 +34,24 @@ rule convert_to_gff3:
 		  gffread {output.gff3_file} -g {input.reference_fasta} -w {output.transcript_file}
 		"""
 
-rule t:
+rule candidate_coding_regions:
 	input:
-		sorted_bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}_sorted.bam",
+		transcript_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/merged_{reference_genome}_transcript.fasta",
 	output:
-		gtf_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/{sample}_{reference_genome}.gtf",
-		  gene_abundance=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/{sample}_{reference_genome}_gene_abundances.txt"
+        bed_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.bed",
+		cds_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.cds",
+        gff3_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.gff3",
+		pep_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.pep",
+		pep_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.pep",
+        dir_trans=directory(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder_dir"),
 	message:
-		"Transcriptome assembly"
+		"Getting coding regions with Transdecoder"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
 	threads: 8
 	shell:
 		"""
-		  stringtie {input.sorted_bam} -p {threads} -o {output.gtf_file} -A {output.gene_abundance}
+        TransDecoder.LongOrfs -t {input.transcript_file}
+        TransDecoder.Predict -t {input.transcript_file}
 		"""
+
