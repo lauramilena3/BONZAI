@@ -59,7 +59,7 @@ rule map_reads_to_index:
 	shell:
 		"""
 		hisat2 --dta -p {threads} -x {params.genome} -1 {input.forward_paired} -2 {input.reverse_paired} -S {output.sam}
-      samtools view  -@ {threads} -bS {output.sam}  > {output.bam} 
+      	samtools view  -@ {threads} -bS {output.sam}  > {output.bam} 
 		samtools sort -@ {threads} {output.bam} -o {output.sorted_bam}
 		samtools index {output.sorted_bam}
 		samtools flagstat {output.sorted_bam} > {output.flagstats}

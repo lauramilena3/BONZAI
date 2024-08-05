@@ -82,6 +82,8 @@ def inputTranscriptomeAssembly(wildcards):
 	inputs=[]
 	inputs.extend(expand(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta", reference_genome=REFERENCE_GENOME_ACC)),
 	inputs.extend(expand(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.pep", reference_genome=REFERENCE_GENOME_ACC)),
+	inputs.extend(expand(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_fasta", reference_genome=REFERENCE_GENOME_ACC)),
+	inputs.extend(expand(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_est.fasta", reference_genome=REFERENCE_GENOME_ACC)),
 
 	return inputs
 

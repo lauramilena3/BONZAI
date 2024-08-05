@@ -8,7 +8,7 @@ rule transcriptome_assembly_bam:
 		"Transcriptome assembly with Stringtie2"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
-	threads: 8
+	threads: 16
 	shell:
 		"""
 		stringtie {input.sorted_bam} -p {threads} -o {output.gtf_file} -A {output.gene_abundance}
@@ -26,10 +26,10 @@ rule convert_to_gff3:
 		"Merging gtf files to ggf3 to generate transcript file"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
-	threads: 8
+	threads: 4
 	shell:
 		"""
-		stringtie --merge {input.gtf_files} -o {output.gtf_merged}	
+		stringtie -p {threads} --merge {input.gtf_files} -o {output.gtf_merged}	
 		gffread {output.gtf_merged} -o {output.gff3_file} 
 		gffread {output.gff3_file} -g {input.reference_fasta} -w {output.transcript_file}
 		"""
@@ -50,7 +50,7 @@ rule candidate_coding_regions:
 		"Getting coding regions with Transdecoder"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
-	threads: 8
+	threads: 1
 	shell:
 		"""
 		TransDecoder.LongOrfs -t {input.transcript_file} --output_dir {params.transcriptome_assembly_dir} -m {params.min_aa_length}
@@ -59,17 +59,31 @@ rule candidate_coding_regions:
 rule dereplication_cd_hit:
 	input:
 		pep_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.pep",
-		cds_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.cds",
  	output:
-		pep_cdhit=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_fasta.clstr",
-		cds_cdhit=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_est.fasta",
+		pep_cdhit=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_fasta",
+		pep_cdhit_clstr=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_fasta.clstr",
 	message:
-		"Dereplication of the cds and pep files with CD-HIT"
+		"Dereplication of the pep files with CD-HIT"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
-	threads: 8
+	threads: 1
 	shell:
 		"""
-        cd-hit -i {input.pep_file} -o {output.pep_cdhit} -c 0.98 -n 5 -M 0 -T 0
-		cd-hit-est -i {input.ds_file} -o {output.cds_cdhit} -c 1.0 -n 8 -M 0 -T 0
+		cd-hit -i {input.pep_file} -o {output.pep_cdhit} -c 0.98 -n 5 -M 0 -T 0
+		"""
+
+rule dereplication_cd_hit_est:
+	input:
+		cds_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.cds",
+ 	output:
+		cds_cdhit=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_est.fasta",
+		cds_cdhit_clstr=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_est.fasta.clstr",
+	message:
+		"Dereplication of the pep files with CD-HIT-EST"
+	conda:
+		dirs_dict["ENVS_DIR"] + "/env2.yaml"
+	threads: 1
+	shell:
+		"""
+		cd-hit-est -i {input.cds_file} -o {output.cds_cdhit} -c 1.0 -n 8 -M 0 -T 0
 		"""
