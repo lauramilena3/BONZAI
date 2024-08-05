@@ -9,7 +9,7 @@ rule de_novo_assembly:
 	params:
 		trinity_dir=dirs_dict["ASSEMBLY_DIR"] + "/{sample}_trinity",
 	conda:
-		dirs_dict["ENVS_DIR"] + "/env1.yaml"
+		dirs_dict["ENVS_DIR"] + "/env2.yaml"
 	threads: 16
 	resources:
 		mem_gb=100
