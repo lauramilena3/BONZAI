@@ -59,7 +59,7 @@ rule candidate_coding_regions:
 rule dereplication_cd_hit:
 	input:
 		pep_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.pep",
- 	output:
+	output:
 		pep_cdhit=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_fasta",
 		pep_cdhit_clstr=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_fasta.clstr",
 	message:
@@ -75,7 +75,7 @@ rule dereplication_cd_hit:
 rule dereplication_cd_hit_est:
 	input:
 		cds_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.cds",
- 	output:
+	output:
 		cds_cdhit=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_est.fasta",
 		cds_cdhit_clstr=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_est.fasta.clstr",
 	message:
