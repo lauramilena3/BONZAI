@@ -8,6 +8,8 @@ rule de_novo_assembly:
 		jellyfish_count=temp(dirs_dict["TEMP_CLUSTER_DIR"] +"/{sample}_mer_counts.jf")
 	params:
 		trinity_dir=dirs_dict["ASSEMBLY_DIR"] + "/{sample}_trinity",
+	conda:
+		dirs_dict["ENVS_DIR"] + "/env1.yaml"
 	threads: 16
 	resources:
 		mem_gb=100
