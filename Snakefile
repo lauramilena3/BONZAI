@@ -80,7 +80,7 @@ def inputMapping(wildcards):
 
 def inputTranscriptomeAssembly(wildcards):
 	inputs=[]
-	inputs.extend(expand(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/merged_{genome_name}_transcript.fasta" genome_name=REFERENCE_GENOME_ACC)),
+	inputs.extend(expand(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/merged_{genome_name}_transcript.fasta", genome_name=REFERENCE_GENOME_ACC)),
 	return inputs
 
 rule all:
