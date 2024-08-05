@@ -1,9 +1,9 @@
 rule transcriptome_assembly_bam:
 	input:
-		sorted_bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}_sorted.bam",
+		sorted_bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}_sorted.bam",
 	output:
-		gtf_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/{sample}_{genome_name}.gtf",
-		  gene_abundance=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/{sample}_{genome_name}_gene_abundances.txt"
+		gtf_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/{sample}_{reference_genome}.gtf",
+		  gene_abundance=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/{sample}_{reference_genome}_gene_abundances.txt"
 	message:
 		"Transcriptome assembly"
 	conda:
@@ -16,12 +16,12 @@ rule transcriptome_assembly_bam:
 
 rule convert_to_gff3:
 	input:
-		gtf_files=expand(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/{sample}_{{genome_name}}.gtf", sample=SAMPLES),
-		  reference_fasta=dirs_dict["GENOMES_DIR"] +"/{reference_genome}.fasta",
+		gtf_files=expand(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/{sample}_{{reference_genome}}.gtf", sample=SAMPLES),
+		reference_fasta=dirs_dict["GENOMES_DIR"] +"/{reference_genome}.fasta",
 	output:
-		gtf_merged=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{genome_name}.gtf",
-		gff3_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{genome_name}.gff3",
-		  transcript_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/merged_{genome_name}_transcript.fasta"
+		gtf_merged=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.gtf",
+		gff3_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.gff3",
+		transcript_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/merged_{reference_genome}_transcript.fasta"
 	message:
 		"merging "
 	conda:
