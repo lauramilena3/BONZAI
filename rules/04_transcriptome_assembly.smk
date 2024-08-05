@@ -5,7 +5,7 @@ rule transcriptome_assembly_bam:
 		gtf_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/{sample}_{reference_genome}.gtf",
 		  gene_abundance=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/{sample}_{reference_genome}_gene_abundances.txt"
 	message:
-		"Transcriptome assembly"
+		"Transcriptome assembly with Stringtie2"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
 	threads: 8
@@ -23,7 +23,7 @@ rule convert_to_gff3:
 		gff3_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.gff3",
 		transcript_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/merged_{reference_genome}_transcript.fasta"
 	message:
-		"merging "
+		"Merging gtf files to ggf3 to generate transcript file"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env2.yaml"
 	threads: 8
@@ -32,4 +32,20 @@ rule convert_to_gff3:
 		  stringtie --merge {input.gtf_files} -o {output.gtf_merged}	
 		  gffread {output.gtf_merged} -o {output.gff3_file} 
 		  gffread {output.gff3_file} -g {input.reference_fasta} -w {output.transcript_file}
+		"""
+
+rule t:
+	input:
+		sorted_bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}_sorted.bam",
+	output:
+		gtf_file=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/{sample}_{reference_genome}.gtf",
+		  gene_abundance=dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] +"/{sample}_{reference_genome}_gene_abundances.txt"
+	message:
+		"Transcriptome assembly"
+	conda:
+		dirs_dict["ENVS_DIR"] + "/env2.yaml"
+	threads: 8
+	shell:
+		"""
+		  stringtie {input.sorted_bam} -p {threads} -o {output.gtf_file} -A {output.gene_abundance}
 		"""

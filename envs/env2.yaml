@@ -2,8 +2,8 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - stringtie
-  - cufflinks
-  - transdecoder
-  - cd-hit
+  - stringtie =2.2.3
+  - cufflinks =2.2.1
+  - transdecoder =5.7.1
+  - cd-hit =4.8.1
 
