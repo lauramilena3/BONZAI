@@ -46,7 +46,7 @@ rule map_reads_to_index:
 	wildcard_constraints:
 		genome_name="[A-Z]+_[0-9]+.[0-9]"
 	params:
-		genome="{genome_name}" 
+		genome=dirs_dict["GENOMES_DIR"] +"/{genome_name}",
 	message:
 		"Indexing genome with HISAT2"
 	conda:
