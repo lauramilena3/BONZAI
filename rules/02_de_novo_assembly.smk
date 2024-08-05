@@ -16,5 +16,5 @@ rule de_novo_assembly:
 	shell:
 		"""
 		# jellyfish count -o {output.jellyfish_count}
-		Trinity --seqType fq --left {input.forward_paired}  --right {input.reverse_paired}  --output {params.trinity_dir} --max_memory {resources.mem_gb}G --full_cleanup
+		Trinity --seqType fq --left {input.forward_paired}  --right {input.reverse_paired}  --output {params.trinity_dir} --max_memory {resources.mem_gb}G --full_cleanup --CPU {threads}
 		"""
