@@ -141,7 +141,7 @@ rule contaminants_KRAKEN:
 		dirs_dict["BENCHMARKS"] +"/01_QC/kraken_{sample}_preliminary.tsv"
 	resources:
 		cpus_per_task= 8,
-		mem_gb= 16,
+		mem_gb= 32,
 	shell:
 		"""
 		kraken2 --db {params.kraken_db} --threads {resources.cpus_per_task} \
@@ -214,7 +214,7 @@ rule contaminants_KRAKEN_clean:
 		dirs_dict["BENCHMARKS"] +"/01_QC/kraken_{sample}_clean.tsv"
 	resources:
 		cpus_per_task= 8,
-		mam_gb=16,
+		mam_gb=32,
 	shell:
 		"""
 		kraken2 --db {params.kraken_db} --threads {resources.cpus_per_task} \
