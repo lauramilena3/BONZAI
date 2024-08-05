@@ -14,8 +14,8 @@ rule de_novo_assembly:
 	benchmark:
 		dirs_dict["BENCHMARKS"] +"/deNovoAssembly/{sample}_denovo_assembly.tsv"
 	resources:
-		mem_gb=100
-		runtime= 60 # minutes
+		mem_gb=100,
+		runtime= 60, # minutes
 	shell:
 		"""
 		# jellyfish count -o {output.jellyfish_count}
