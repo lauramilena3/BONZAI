@@ -43,16 +43,24 @@ rule map_reads_to_index:
 		reverse_paired=dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean.fastq.gz",
 	output:
 		sam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}.sam",
+		bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}.bam",
+		sorted_bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}_sorted.bam",
+		sorted_bam=dirs_dict["MAPPING_DIR"] + "/{sample}_{genome_name}_flagstats.txt",
+
 	wildcard_constraints:
 		genome_name="[A-Z]+_[0-9]+.[0-9]"
 	params:
 		genome=dirs_dict["GENOMES_DIR"] +"/{genome_name}",
 	message:
-		"Indexing genome with HISAT2"
+		"Mapping reads to reference genomes with HISAT2"
 	conda:
 		dirs_dict["ENVS_DIR"] + "/env1.yaml"
 	threads: 16
 	shell:
 		"""
 		hisat2 --dta -p {threads} -x {params.genome} -1 {input.forward_paired} -2 {input.reverse_paired} -S {output.sam}
+      samtools view  -@ {threads} -bS {output.sam}  > {output.bam} 
+		samtools sort -@ {threads} {output.bam} -o {output.sorted_bam}
+		samtools index {output.sorted_bam}
+		samtools flagstat {output.sorted_bam} > {output.flagstats}
 		"""
