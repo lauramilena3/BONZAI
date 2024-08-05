@@ -1,9 +1,9 @@
 default-resources:
-    # slurm_partition: node
+    slurm_partition: node
     slurm_account: naiss2023-5-461
     runtime: 30
     mem_mb: 1000
     tasks: 1
     nodes: 1
     cpus_per_task: 1
-    slurm_extra: "'--mail-user=zk.montes10@uniandes.edu.co --mail-type=ALL --exclude=node-24'"
+    slurm_extra: "'--mail-user=zk.montes10@uniandes.edu.co --mail-type=all'"
