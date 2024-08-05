@@ -15,6 +15,6 @@ rule de_novo_assembly:
 		mem_gb=100
 	shell:
 		"""
-		jellyfish count -o {output.jellyfish_count}
-		Trinity --seqType fq --left {input.forward_paired}  --right {input.reverse_paired}  --output {params.trinity_dir} --max_memory {resources.mem_gb}G
+		# jellyfish count -o {output.jellyfish_count}
+		Trinity --seqType fq --left {input.forward_paired}  --right {input.reverse_paired}  --output {params.trinity_dir} --max_memory {resources.mem_gb}G --full_cleanup
 		"""
