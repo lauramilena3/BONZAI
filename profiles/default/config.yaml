@@ -2,7 +2,7 @@ default-resources:
     slurm_partition: core
     slurm_account: naiss2023-5-461
     runtime: 30 # minutes
-    mem_mb: 1024 # 1G 
+    mem_gb: 1 # 1G 
     tasks: 1
     nodes: 1
     cpus_per_task: 1 
