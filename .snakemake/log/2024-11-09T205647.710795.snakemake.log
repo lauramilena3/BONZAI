@@ -1,0 +1,3 @@
+NameError in file /Users/zaidemontesortiz/Documents/1_PhD_project_Spiders_Ticks_Beetles/Git/BONZAI/Snakefile, line 45:
+name 'SAMPLES' is not defined
+  File "/Users/zaidemontesortiz/Documents/1_PhD_project_Spiders_Ticks_Beetles/Git/BONZAI/Snakefile", line 45, in <module>

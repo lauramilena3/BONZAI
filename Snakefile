@@ -22,7 +22,8 @@ PAIRED=True
 
 if not RAW_DATA_DIR == "":
 	RAW_DATA_DIR=RAW_DATA_DIR.rstrip("/")
-	SAMPLES,=glob_wildcards(RAW_DATA_DIR + "/{sample}_" + str(config['reverse_tag']) + ".fastq.gz")
+	#SAMPLES,=glob_wildcards(RAW_DATA_DIR + "/{sample}_" + str(config['reverse_tag']) + ".fastq.gz")
+	SAMPLES, = glob_wildcards(RAW_DATA_DIR + "/{sample}_L00*_R" + str(config['reverse_tag']) + "_001.fastq.gz")
 	SAMPLES.sort()
 else:
 	RAW_DATA_DIR=RESULTS_DIR+"/00_RAW_DATA"
