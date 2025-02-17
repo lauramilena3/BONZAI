@@ -1,3 +1,4 @@
+from Snakefile import dirs_dict
 rule countReads_gz:
     input:
         fastq=dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_{read}_001.fastq.gz"
