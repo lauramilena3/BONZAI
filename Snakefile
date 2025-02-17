@@ -107,13 +107,13 @@ def inputDeNovoAssembly(wildcards):
 
 rule all:
     input:
-        expand(inputReadsCount, sample=SAMPLES) if SAMPLES else [],
-        expand(inputQC),
-        # expand(inputDeNovoAssembly, sample=SAMPLES) if SAMPLES else [],
-        # expand(inputMapping, sample=SAMPLES, reference_genome=REFERENCE_GENOME_ACC) if SAMPLES and REFERENCE_GENOME_ACC else [],
-        # inputTranscriptomeAssembly,
-        # inputAnnotation,
-        # inputAbundance,
+        inputReadsCount({}) if SAMPLES else [],
+        inputQC({}),
+        # inputDeNovoAssembly({}) if SAMPLES else [],
+        # inputMapping({}) if SAMPLES and REFERENCE_GENOME_ACC else [],
+        # inputTranscriptomeAssembly({}),
+        # inputAnnotation({}),
+        # inputAbundance({}),
 
 include: os.path.join(dirs_dict["RULES_DIR"], '00_download_tools.smk')
 include: os.path.join(dirs_dict["RULES_DIR"], '01_quality_control.smk')
