@@ -61,15 +61,25 @@ print("📂 Read Types:", READ_TYPES)
 print("📂 Reference Genomes:", REFERENCE_GENOME_ACC)
 
 # ----------------------------------------------------------------------------
+# CREAR LOS DIRECTORIOS SI NO EXISTEN
+# ----------------------------------------------------------------------------
+
+for dir_path in dirs_dict.values():
+    os.makedirs(dir_path, exist_ok=True)
+
+print("\n🔹 Se han creado/verificado los siguientes directorios:")
+for key, value in dirs_dict.items():
+    print(f"🔸 {key}: {value}")
+
+# ----------------------------------------------------------------------------
 # FUNCIONES PARA OBTENER LOS ARCHIVOS DE ENTRADA
 # ----------------------------------------------------------------------------
 
 def inputReadsCount(wildcards):
-    inputs = []
-    if SAMPLES:
-        inputs.extend(expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00*_R1_read_count.txt", sample=SAMPLES))
-        inputs.extend(expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00*_R2_read_count.txt", sample=SAMPLES))
-    return inputs
+    if not SAMPLES:
+        return []
+    return expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_read_count.txt", 
+                  sample=SAMPLES, lane=["1", "2", "3", "4"], read=READ_TYPES)
 
 def inputQC(wildcards):
     return [
@@ -82,23 +92,14 @@ def inputQC(wildcards):
 def inputMapping(wildcards):
     if not SAMPLES or not REFERENCE_GENOME_ACC:
         return []
-    return expand(dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}.sam", sample=SAMPLES, reference_genome=REFERENCE_GENOME_ACC)
+    return expand(dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}.sam", 
+                  sample=SAMPLES, reference_genome=REFERENCE_GENOME_ACC)
 
 def inputDeNovoAssembly(wildcards):
     if not SAMPLES:
         return []
-    return expand(dirs_dict["ASSEMBLY_DIR"] + "/{sample}_trinity/{sample}.fasta", sample=SAMPLES)
-
-# ----------------------------------------------------------------------------
-# CREAR LOS DIRECTORIOS SI NO EXISTEN
-# ----------------------------------------------------------------------------
-
-for dir_path in dirs_dict.values():
-    os.makedirs(dir_path, exist_ok=True)
-
-print("\n🔹 Se han creado/verificado los siguientes directorios:")
-for key, value in dirs_dict.items():
-    print(f"🔸 {key}: {value}")
+    return expand(dirs_dict["ASSEMBLY_DIR"] + "/{sample}_trinity/{sample}.fasta", 
+                  sample=SAMPLES)
 
 # ----------------------------------------------------------------------------
 # REGLAS DEL PIPELINE
@@ -106,10 +107,10 @@ for key, value in dirs_dict.items():
 
 rule all:
     input:
-        inputReadsCount,
-        inputQC,
-        # inputDeNovoAssembly,
-        # inputMapping,
+        expand(inputReadsCount, sample=SAMPLES) if SAMPLES else [],
+        expand(inputQC),
+        # expand(inputDeNovoAssembly, sample=SAMPLES) if SAMPLES else [],
+        # expand(inputMapping, sample=SAMPLES, reference_genome=REFERENCE_GENOME_ACC) if SAMPLES and REFERENCE_GENOME_ACC else [],
         # inputTranscriptomeAssembly,
         # inputAnnotation,
         # inputAbundance,
