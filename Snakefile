@@ -20,15 +20,16 @@ if not RESULTS_DIR and RAW_DATA_DIR:
 
 PAIRED = True
 
-# Asegurar que los READ_TYPES sean correctos
+# Asegurar que los READ_TYPES sean correctos y corregir posibles errores
 READ_TYPES = [config['forward_tag'], config['reverse_tag']]
+READ_TYPES = [re.sub(r'RR', 'R', rt) for rt in READ_TYPES]  # Evitar "RR1" o "RR2"
 if any(rt not in ["R1", "R2"] for rt in READ_TYPES):
     raise ValueError(f"⚠️ Error en READ_TYPES: {READ_TYPES}. Debe ser ['R1', 'R2'].")
 
-# Buscar muestras en el directorio de datos crudos
+# Buscar muestras en el directorio de datos crudos asegurando el formato correcto
 if RAW_DATA_DIR:
     sample_files = glob.glob(RAW_DATA_DIR + '/*_L00*_R[12]_001.fastq.gz')
-    SAMPLES = sorted(set(re.sub(r'_L00\d+_R\d+_001.fastq.gz$', '', os.path.basename(f)) for f in sample_files))
+    SAMPLES = sorted(set(re.sub(r'_L00\d+_R[12]_001.fastq.gz$', '', os.path.basename(f)) for f in sample_files)))
 else:
     RAW_DATA_DIR = RESULTS_DIR + "/00_RAW_DATA"
     SAMPLES = []
@@ -114,16 +115,9 @@ rule all:
     input:
         inputReadsCount({}) if SAMPLES else [],
         inputQC({}),
-        # inputDeNovoAssembly({}) if SAMPLES else [],
-        # inputMapping({}) if SAMPLES and REFERENCE_GENOME_ACC else [],
-        # inputTranscriptomeAssembly({}),
-        # inputAnnotation({}),
-        # inputAbundance({}),
 
 include: os.path.join(dirs_dict["RULES_DIR"], '00_download_tools.smk')
 include: os.path.join(dirs_dict["RULES_DIR"], '01_quality_control.smk')
 include: os.path.join(dirs_dict["RULES_DIR"], '02_de_novo_assembly.smk')
 include: os.path.join(dirs_dict["RULES_DIR"], '03_mapping.smk')
 include: os.path.join(dirs_dict["RULES_DIR"], '04_transcriptome_assembly.smk')
-# include: os.path.join(dirs_dict["RULES_DIR"], '05_annotation.smk')
-# include: os.path.join(dirs_dict["RULES_DIR"], '06_gene_expression.smk')
