@@ -2,12 +2,12 @@ rule countReads_gz:
     input:
         fastq=expand(
             dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_001.fastq.gz",
-            sample=SAMPLES, lane=["1", "2", "3", "4"], read=READ_TYPES
+            sample=SAMPLES, lane=["1", "2", "3", "4"], read=["1", "2"]  # <- Corregido
         ),
     output:
         counts=expand(
             dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_read_count.txt",
-            sample=SAMPLES, lane=["1", "2", "3", "4"], read=READ_TYPES
+            sample=SAMPLES, lane=["1", "2", "3", "4"], read=["1", "2"]  # <- Corregido
         ),
     message:
         "Counting reads in fastq.gz file",
