@@ -57,7 +57,7 @@ rule fastQC_post:
 rule preMultiQC:
     input:
         zipped=expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_fastqc.zip",
-                      sample=SAMPLES, lane=["1", "2", "3", "4"], read=READ_TYPES)
+                      sample=SAMPLES, lane=["1", "2", "3", "4"], read=["R1", "R2"])
     output:
         multiqc=dirs_dict["QC_DIR"] + "/preQC_illumina_report.html",
         multiqc_txt=dirs_dict["QC_DIR"] + "/preQC_illumina_report_data/multiqc_fastqc.txt"
