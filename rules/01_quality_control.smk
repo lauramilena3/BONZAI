@@ -1,8 +1,8 @@
 rule countReads_gz:
     input:
-        fastq=expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_{read}_001.fastq.gz", lane=["1", "2", "3", "4"], read=READ_TYPES),
+        fastq=expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_{read}_001.fastq.gz", sample=SAMPLES, lane=["1", "2", "3", "4"], read=READ_TYPES),
     output:
-        counts=expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_{read}_read_count.txt", lane=["1", "2", "3", "4"], read=READ_TYPES),
+        counts=expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_{read}_read_count.txt", sample=SAMPLES, lane=["1", "2", "3", "4"], read=READ_TYPES),
     message:
         "Counting reads in fastq.gz file",
     conda:
