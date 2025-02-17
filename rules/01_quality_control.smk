@@ -1,23 +1,21 @@
 rule countReads_gz:
     input:
-        raw_fastq=expand(
-            dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_001.fastq.gz",
-            sample=SAMPLES, lane=["1", "2", "3", "4"], read=["1", "2"]  # <- Corregido
-        ),
+        fastq=dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_001.fastq.gz"
     output:
-        html=temp(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_fastqc.html"),  # <- Corregido
-        zipped=(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_fastqc.zip"),  # <- Corregido
+        counts=dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_read_count.txt"
+    log:
+        count_log=dirs_dict["BENCHMARKS"] + "/01_QC/{sample}_L00{lane}_R{read}_read_count.log"
     message:
-        "Performing fastQC statistics on raw data",
+        "Counting reads in fastq.gz file: {input.fastq}"
     conda:
-        dirs_dict["ENVS_DIR"] + "/QC.yaml",
+        dirs_dict["ENVS_DIR"] + "/QC.yaml"
     benchmark:
-        dirs_dict["BENCHMARKS"] + "/01_QC/{sample}_pre_qc.tsv",
+        dirs_dict["BENCHMARKS"] + "/01_QC/{sample}_L00{lane}_R{read}_read_count.tsv"
     shell:
         """
-        fastqc {input.raw_fastq}
+        echo $(( $(zgrep -Ec "$" {input.fastq}) / 4 )) > {output.counts} 2> {log.count_log}
         """
-		
+
 rule fastQC_pre:
     input:
         raw_fastq=dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_001.fastq.gz"
@@ -43,15 +41,17 @@ rule fastQC_post:
     output:
         html=temp(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_fastqc.html"),
         zipped=dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_fastqc.zip"
+    log:
+        fastqc_log=dirs_dict["BENCHMARKS"] + "/01_QC/{sample}_L00{lane}_R{read}_fastqc.log"
+    benchmark:
+        dirs_dict["BENCHMARKS"] + "/01_QC/{sample}_L00{lane}_R{read}_post_qc.tsv"
     message:
         "Performing FastQC on cleaned data: {input.raw_fastq}"
     conda:
         dirs_dict["ENVS_DIR"] + "/QC.yaml"
-    benchmark:
-        dirs_dict["BENCHMARKS"] + "/01_QC/{sample}_L00{lane}_R{read}_post_qc.tsv"
     shell:
         """
-        fastqc {input.raw_fastq} --outdir {dirs_dict["CLEAN_DATA_DIR"]}
+        fastqc {input.raw_fastq} --outdir {dirs_dict["CLEAN_DATA_DIR"]} &> {log.fastqc_log}
         """
 
 rule preMultiQC:
