@@ -29,7 +29,10 @@ if any(rt not in ["R1", "R2"] for rt in READ_TYPES):
 # Buscar muestras en el directorio de datos crudos asegurando el formato correcto
 if RAW_DATA_DIR:
     sample_files = glob.glob(RAW_DATA_DIR + '/*_L00*_R[12]_001.fastq.gz')
-    SAMPLES = sorted(set(re.sub(r'_L00\d+_R[12]_001.fastq.gz$', '', os.path.basename(f)) for f in sample_files)))
+    SAMPLES = sorted(set(
+        re.sub(r'_L00\d+_R[12]_001.fastq.gz$', '', os.path.basename(f))
+        for f in sample_files
+    ))
 else:
     RAW_DATA_DIR = RESULTS_DIR + "/00_RAW_DATA"
     SAMPLES = []
