@@ -1,4 +1,4 @@
-rule fastQC_pre:
+rule countReads_gz:
     input:
         raw_fastq=expand(
             dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_001.fastq.gz",
