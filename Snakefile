@@ -92,20 +92,23 @@ def inputDeNovoAssembly(wildcards):
 	inputs.extend(expand(dirs_dict["ASSEMBLY_DIR"] + "/{sample}_trinity/{sample}.fasta", sample=SAMPLES)),
 	return inputs
 
-# Create necessary output directories if they don't exist
+# Crear los directorios si no existen
 for dir_path in dirs_dict.values():
     os.makedirs(dir_path, exist_ok=True)
 
-rule all:
-	input:
-		inputReadsCount,
-		inputQC,
-		# inputDeNovoAssembly,
-		# inputMapping,
-		# inputTranscriptomeAssembly,
-		# inputAnnotation,
-		# inputAbundance,
+print("🔹 Se han creado/verificado los siguientes directorios:")
+for key, value in dirs_dict.items():
+    print(f"{key}: {value}")
 
+rule all:
+    input:
+        inputReadsCount,
+        inputQC,
+        # inputDeNovoAssembly,
+        # inputMapping,
+        # inputTranscriptomeAssembly,
+        # inputAnnotation,
+        # inputAbundance,
 
 include: os.path.join(dirs_dict["RULES_DIR"], '00_download_tools.smk')
 include: os.path.join(dirs_dict["RULES_DIR"], '01_quality_control.smk')
