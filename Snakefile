@@ -92,6 +92,10 @@ def inputDeNovoAssembly(wildcards):
 	inputs.extend(expand(dirs_dict["ASSEMBLY_DIR"] + "/{sample}_trinity/{sample}.fasta", sample=SAMPLES)),
 	return inputs
 
+# Create necessary output directories if they don't exist
+for dir_path in dirs_dict.values():
+    os.makedirs(dir_path, exist_ok=True)
+
 rule all:
 	input:
 		inputReadsCount,
