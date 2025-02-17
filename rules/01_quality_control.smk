@@ -1,21 +1,21 @@
-rule countReads_gz:
+rule fastQC_pre:
     input:
-        fastq=expand(
+        raw_fastq=expand(
             dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_001.fastq.gz",
             sample=SAMPLES, lane=["1", "2", "3", "4"], read=["1", "2"]  # <- Corregido
         ),
     output:
-        counts=expand(
-            dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_read_count.txt",
-            sample=SAMPLES, lane=["1", "2", "3", "4"], read=["1", "2"]  # <- Corregido
-        ),
+        html=temp(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_fastqc.html"),  # <- Corregido
+        zipped=(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_fastqc.zip"),  # <- Corregido
     message:
-        "Counting reads in fastq.gz file",
+        "Performing fastQC statistics on raw data",
     conda:
         dirs_dict["ENVS_DIR"] + "/QC.yaml",
+    benchmark:
+        dirs_dict["BENCHMARKS"] + "/01_QC/{sample}_pre_qc.tsv",
     shell:
         """
-        echo $(( $(zgrep -Ec "$" {input.fastq}) / 4 )) > {output.counts}
+        fastqc {input.raw_fastq}
         """
 
 rule fastQC_pre:
