@@ -12,27 +12,20 @@ configfile: "config.yaml"
 # Global variables
 #======================================================
 
-RAW_DATA_DIR = config['input_dir'].rstrip("/")
-RESULTS_DIR = config['results_dir'].rstrip("/")
-
-if not RESULTS_DIR and RAW_DATA_DIR:
-    RESULTS_DIR = os.path.abspath(os.path.join(RAW_DATA_DIR, os.pardir))
+RAW_DATA_DIR = config["dirs"]["RAW_DATA_DIR"].rstrip("/")
+RESULTS_DIR = os.path.dirname(RAW_DATA_DIR)
 
 PAIRED = True
 
-# **Asegurar que READ_TYPES solo contenga "R1" y "R2"**
-READ_TYPES = [config['forward_tag'], config['reverse_tag']]
-READ_TYPES = ["R1" if rt == "RR1" else "R2" if rt == "RR2" else rt for rt in READ_TYPES]
+# Asegurar que los READ_TYPES sean correctos
+READ_TYPES = [config["forward_tag"], config["reverse_tag"]]
 if any(rt not in ["R1", "R2"] for rt in READ_TYPES):
     raise ValueError(f"⚠️ Error en READ_TYPES: {READ_TYPES}. Debe ser ['R1', 'R2'].")
 
-# **Buscar muestras en el directorio de datos crudos asegurando el formato correcto**
+# Buscar muestras en el directorio de datos crudos
 if RAW_DATA_DIR:
     sample_files = glob.glob(RAW_DATA_DIR + '/*_L00*_R[12]_001.fastq.gz')
-    SAMPLES = sorted(set(
-        re.sub(r'_L00\d+_R[12]_001.fastq.gz$', '', os.path.basename(f))
-        for f in sample_files
-    ))
+    SAMPLES = sorted(set(re.sub(r'_L00\d+_R[12]_001.fastq.gz$', '', os.path.basename(f)) for f in sample_files))
 else:
     RAW_DATA_DIR = RESULTS_DIR + "/00_RAW_DATA"
     SAMPLES = []
@@ -41,26 +34,7 @@ else:
 if not SAMPLES:
     print("⚠️ No samples found! Please check your input directory.")
 
-# **Definir directorios**
-dir_list = [
-    "RULES_DIR", "ENVS_DIR", "DB_DIR", "ADAPTERS_DIR", "RAW_NOTEBOOKS", "RAW_DATA_DIR",
-    "QC_DIR", "CLEAN_DATA_DIR", "ASSEMBLY_DIR", "MAPPING_DIR", "TRANSCRIPTOME_ASSEMBLY_DIR",
-    "ANNOTATION", "ABUNDANCE", "BENCHMARKS", "NOTEBOOKS_DIR", "PLOTS_DIR", "GENOMES_DIR",
-    "TEMP_CLUSTER_DIR"
-]
-
-dir_names = [
-    "rules", "../envs", "db", "db/adapters", "../notebooks", RAW_DATA_DIR,
-    RESULTS_DIR + "/01_QC", RESULTS_DIR + "/01_QC", RESULTS_DIR + "/02_ASSEMBLY",
-    RESULTS_DIR + "/03_MAPPING", RESULTS_DIR + "/04_TRANSCRIPTOME_ASSEMBLY",
-    RESULTS_DIR + "/05_ANNOTATION", RESULTS_DIR + "/06_GENE_EXPRESSION",
-    RESULTS_DIR + "/BENCHMARK", RESULTS_DIR + "/NOTEBOOKS", RESULTS_DIR + "/FIGURES_AND_TABLES",
-    RESULTS_DIR + "/REFERENCE_GENOMES", RESULTS_DIR + "/TEMP_CLUSTER_DIR"
-]
-
-dirs_dict = dict(zip(dir_list, dir_names))
-
-REFERENCE_GENOME_ACC = config['reference_acc_list'].split()
+REFERENCE_GENOME_ACC = config["reference_acc_list"].split()
 
 print("📂 Input Directory:", RAW_DATA_DIR)
 print("📂 Results Directory:", RESULTS_DIR)
@@ -69,48 +43,48 @@ print("📂 Read Types:", READ_TYPES)
 print("📂 Reference Genomes:", REFERENCE_GENOME_ACC)
 
 # ----------------------------------------------------------------------------
-# **CREAR LOS DIRECTORIOS SI NO EXISTEN**
+# CREAR LOS DIRECTORIOS SI NO EXISTEN
 # ----------------------------------------------------------------------------
 
-for dir_path in dirs_dict.values():
+for key, dir_path in config["dirs"].items():
     os.makedirs(dir_path, exist_ok=True)
 
 print("\n🔹 Se han creado/verificado los siguientes directorios:")
-for key, value in dirs_dict.items():
+for key, value in config["dirs"].items():
     print(f"🔸 {key}: {value}")
 
 # ----------------------------------------------------------------------------
-# **FUNCIONES PARA OBTENER LOS ARCHIVOS DE ENTRADA**
+# FUNCIONES PARA OBTENER LOS ARCHIVOS DE ENTRADA
 # ----------------------------------------------------------------------------
 
 def inputReadsCount(wildcards):
     if not SAMPLES:
         return []
-    return expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_{read}_read_count.txt", 
+    return expand(config["dirs"]["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_read_count.txt", 
                   sample=SAMPLES, lane=["1", "2", "3", "4"], read=READ_TYPES)
 
 def inputQC(wildcards):
     return [
-        dirs_dict["QC_DIR"] + "/preQC_illumina_report.html",
-        dirs_dict["QC_DIR"] + "/postQC_illumina_report.html",
-        dirs_dict["QC_DIR"] + "/pre_decontamination_kraken_multiqc_report.html",
-        dirs_dict["QC_DIR"] + "/post_decontamination_kraken_multiqc_report.html"
+        config["dirs"]["QC_DIR"] + "/preQC_illumina_report.html",
+        config["dirs"]["QC_DIR"] + "/postQC_illumina_report.html",
+        config["dirs"]["QC_DIR"] + "/pre_decontamination_kraken_multiqc_report.html",
+        config["dirs"]["QC_DIR"] + "/post_decontamination_kraken_multiqc_report.html"
     ]
 
 def inputMapping(wildcards):
     if not SAMPLES or not REFERENCE_GENOME_ACC:
         return []
-    return expand(dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}.sam", 
+    return expand(config["dirs"]["MAPPING_DIR"] + "/{sample}_{reference_genome}.sam", 
                   sample=SAMPLES, reference_genome=REFERENCE_GENOME_ACC)
 
 def inputDeNovoAssembly(wildcards):
     if not SAMPLES:
         return []
-    return expand(dirs_dict["ASSEMBLY_DIR"] + "/{sample}_trinity/{sample}.fasta", 
+    return expand(config["dirs"]["ASSEMBLY_DIR"] + "/{sample}_trinity/{sample}.fasta", 
                   sample=SAMPLES)
 
 # ----------------------------------------------------------------------------
-# **REGLAS DEL PIPELINE**
+# REGLAS DEL PIPELINE
 # ----------------------------------------------------------------------------
 
 rule all:
@@ -118,8 +92,8 @@ rule all:
         inputReadsCount({}) if SAMPLES else [],
         inputQC({}),
 
-include: os.path.join(dirs_dict["RULES_DIR"], '00_download_tools.smk')
-include: os.path.join(dirs_dict["RULES_DIR"], '01_quality_control.smk')
-include: os.path.join(dirs_dict["RULES_DIR"], '02_de_novo_assembly.smk')
-include: os.path.join(dirs_dict["RULES_DIR"], '03_mapping.smk')
-include: os.path.join(dirs_dict["RULES_DIR"], '04_transcriptome_assembly.smk')
+include: os.path.join("rules", '00_download_tools.smk')
+include: os.path.join("rules", '01_quality_control.smk')
+include: os.path.join("rules", '02_de_novo_assembly.smk')
+include: os.path.join("rules", '03_mapping.smk')
+include: os.path.join("rules", '04_transcriptome_assembly.smk')
