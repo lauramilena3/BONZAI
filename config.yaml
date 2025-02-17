@@ -1,9 +1,10 @@
 #General
 dirs:
+
   RAW_DATA_DIR: "/cfs/klemming/projects/supr/naiss2023-23-109/BONZAI/00_RAW_DATA"
   BENCHMARKS: "/cfs/klemming/projects/supr/naiss2023-23-109/BONZAI/results/BENCHMARK"
   ENVS_DIR: "/cfs/klemming/projects/supr/naiss2023-23-109/BONZAI/envs"
-
+  QC_DIR: "/cfs/klemming/projects/supr/naiss2023-23-109/BONZAI/results/01_QC"
 forward_tag: "R1"
 reverse_tag: "R2"
 
