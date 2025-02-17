@@ -12,20 +12,26 @@ configfile: "config.yaml"
 # Global variables
 #======================================================
 
-RAW_DATA_DIR = config['input_dir']
+RAW_DATA_DIR = config['input_dir'].rstrip("/")
 RESULTS_DIR = config['results_dir'].rstrip("/")
 
-if RESULTS_DIR == "" and not RAW_DATA_DIR == "":
+if not RESULTS_DIR and RAW_DATA_DIR:
     RESULTS_DIR = os.path.abspath(os.path.join(RAW_DATA_DIR, os.pardir))
 
 PAIRED = True
 
-if not RAW_DATA_DIR == "":
-    RAW_DATA_DIR=RAW_DATA_DIR.rstrip("/")
-    sample_files = glob.glob(RAW_DATA_DIR + '/*_L00*_R2_001.fastq.gz')
-    SAMPLES = sorted(set(re.sub('_L00._R._001.fastq.gz', '', os.path.basename(f)) for f in sample_files))
+if RAW_DATA_DIR:
+    sample_files = glob.glob(RAW_DATA_DIR + '/*_L00*_R[12]_001.fastq.gz')
+    SAMPLES = sorted(set(re.sub(r'_L00[0-9]_R[12]_001.fastq.gz$', '', os.path.basename(f)) for f in sample_files))
 else:
-    RAW_DATA_DIR=RESULTS_DIR+"/00_RAW_DATA"
+    RAW_DATA_DIR = RESULTS_DIR + "/00_RAW_DATA"
+    SAMPLES = []
+
+# Verificar si hay muestras detectadas
+if not SAMPLES:
+    print("⚠️ No samples found! Please check your input directory.")
+
+# Definir directorios
 
 dir_list = [
     "RULES_DIR", "ENVS_DIR", "DB_DIR", "ADAPTERS_DIR", "RAW_NOTEBOOKS", "RAW_DATA_DIR",
@@ -61,14 +67,8 @@ print("📂 Reference Genomes:", REFERENCE_GENOME_ACC)
 def inputReadsCount(wildcards):
     inputs = []
     if SAMPLES:
-        inputs.extend(expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_" + str(config['forward_tag']) + "_read_count.txt", sample=SAMPLES))
-        inputs.extend(expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_" + str(config['reverse_tag']) + "_read_count.txt", sample=SAMPLES))
-        inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_read_count.txt", sample=SAMPLES))
-        inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_read_count.txt", sample=SAMPLES))
-        inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_merged_unpaired_read_count.txt", sample=SAMPLES))
-        inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_forward_paired_clean_read_count.txt", sample=SAMPLES))
-        inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_reverse_paired_clean_read_count.txt", sample=SAMPLES))
-        inputs.extend(expand(dirs_dict["CLEAN_DATA_DIR"] + "/{sample}_unpaired_clean_read_count.txt", sample=SAMPLES))
+        inputs.extend(expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00*_R1_read_count.txt", sample=SAMPLES))
+        inputs.extend(expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00*_R2_read_count.txt", sample=SAMPLES))
     return inputs
 
 def inputQC(wildcards):
@@ -83,16 +83,6 @@ def inputMapping(wildcards):
     if not SAMPLES or not REFERENCE_GENOME_ACC:
         return []
     return expand(dirs_dict["MAPPING_DIR"] + "/{sample}_{reference_genome}.sam", sample=SAMPLES, reference_genome=REFERENCE_GENOME_ACC)
-
-def inputTranscriptomeAssembly(wildcards):
-    if not REFERENCE_GENOME_ACC:
-        return []
-    return [
-        expand(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta", reference_genome=REFERENCE_GENOME_ACC),
-        expand(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}_transcript.fasta.transdecoder.pep", reference_genome=REFERENCE_GENOME_ACC),
-        expand(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_fasta", reference_genome=REFERENCE_GENOME_ACC),
-        expand(dirs_dict["TRANSCRIPTOME_ASSEMBLY_DIR"] + "/merged_{reference_genome}.cd_hit_est.fasta", reference_genome=REFERENCE_GENOME_ACC)
-    ]
 
 def inputDeNovoAssembly(wildcards):
     if not SAMPLES:
