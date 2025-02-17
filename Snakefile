@@ -20,13 +20,13 @@ if not RESULTS_DIR and RAW_DATA_DIR:
 
 PAIRED = True
 
-# Asegurar que los READ_TYPES sean correctos y corregir posibles errores
+# **Asegurar que READ_TYPES solo contenga "R1" y "R2"**
 READ_TYPES = [config['forward_tag'], config['reverse_tag']]
-READ_TYPES = [re.sub(r'RR', 'R', rt) for rt in READ_TYPES]  # Evitar "RR1" o "RR2"
+READ_TYPES = ["R1" if rt == "RR1" else "R2" if rt == "RR2" else rt for rt in READ_TYPES]
 if any(rt not in ["R1", "R2"] for rt in READ_TYPES):
     raise ValueError(f"⚠️ Error en READ_TYPES: {READ_TYPES}. Debe ser ['R1', 'R2'].")
 
-# Buscar muestras en el directorio de datos crudos asegurando el formato correcto
+# **Buscar muestras en el directorio de datos crudos asegurando el formato correcto**
 if RAW_DATA_DIR:
     sample_files = glob.glob(RAW_DATA_DIR + '/*_L00*_R[12]_001.fastq.gz')
     SAMPLES = sorted(set(
@@ -41,8 +41,7 @@ else:
 if not SAMPLES:
     print("⚠️ No samples found! Please check your input directory.")
 
-# Definir directorios
-
+# **Definir directorios**
 dir_list = [
     "RULES_DIR", "ENVS_DIR", "DB_DIR", "ADAPTERS_DIR", "RAW_NOTEBOOKS", "RAW_DATA_DIR",
     "QC_DIR", "CLEAN_DATA_DIR", "ASSEMBLY_DIR", "MAPPING_DIR", "TRANSCRIPTOME_ASSEMBLY_DIR",
@@ -70,7 +69,7 @@ print("📂 Read Types:", READ_TYPES)
 print("📂 Reference Genomes:", REFERENCE_GENOME_ACC)
 
 # ----------------------------------------------------------------------------
-# CREAR LOS DIRECTORIOS SI NO EXISTEN
+# **CREAR LOS DIRECTORIOS SI NO EXISTEN**
 # ----------------------------------------------------------------------------
 
 for dir_path in dirs_dict.values():
@@ -81,13 +80,13 @@ for key, value in dirs_dict.items():
     print(f"🔸 {key}: {value}")
 
 # ----------------------------------------------------------------------------
-# FUNCIONES PARA OBTENER LOS ARCHIVOS DE ENTRADA
+# **FUNCIONES PARA OBTENER LOS ARCHIVOS DE ENTRADA**
 # ----------------------------------------------------------------------------
 
 def inputReadsCount(wildcards):
     if not SAMPLES:
         return []
-    return expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_read_count.txt", 
+    return expand(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_{read}_read_count.txt", 
                   sample=SAMPLES, lane=["1", "2", "3", "4"], read=READ_TYPES)
 
 def inputQC(wildcards):
@@ -111,7 +110,7 @@ def inputDeNovoAssembly(wildcards):
                   sample=SAMPLES)
 
 # ----------------------------------------------------------------------------
-# REGLAS DEL PIPELINE
+# **REGLAS DEL PIPELINE**
 # ----------------------------------------------------------------------------
 
 rule all:
