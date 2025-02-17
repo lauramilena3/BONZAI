@@ -94,6 +94,6 @@ rule all:
 
 include: os.path.join("rules", '00_download_tools.smk')
 include: os.path.join("rules", '01_quality_control.smk')
-include: os.path.join("rules", '02_de_novo_assembly.smk')
-include: os.path.join("rules", '03_mapping.smk')
-include: os.path.join("rules", '04_transcriptome_assembly.smk')
+#include: os.path.join("rules", '02_de_novo_assembly.smk')
+#include: os.path.join("rules", '03_mapping.smk')
+#include: os.path.join("rules", '04_transcriptome_assembly.smk')
