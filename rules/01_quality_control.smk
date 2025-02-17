@@ -1,12 +1,18 @@
 rule countReads_gz:
     input:
-        fastq=dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_001.fastq.gz"
+        fastq=expand(
+            dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_001.fastq.gz",
+            sample=SAMPLES, lane=["1", "2", "3", "4"], read=READ_TYPES
+        ),
     output:
-        counts=dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_read_count.txt"
+        counts=expand(
+            dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_read_count.txt",
+            sample=SAMPLES, lane=["1", "2", "3", "4"], read=READ_TYPES
+        ),
     message:
-        "Counting reads in {input.fastq}"
+        "Counting reads in fastq.gz file",
     conda:
-        dirs_dict["ENVS_DIR"] + "/QC.yaml"
+        dirs_dict["ENVS_DIR"] + "/QC.yaml",
     shell:
         """
         echo $(( $(zgrep -Ec "$" {input.fastq}) / 4 )) > {output.counts}
