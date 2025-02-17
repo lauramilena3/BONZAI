@@ -21,11 +21,11 @@ if RESULTS_DIR == "" and not RAW_DATA_DIR == "":
 PAIRED = True
 
 if not RAW_DATA_DIR == "":
-    RAW_DATA_DIR = RAW_DATA_DIR.rstrip("/")
-    SAMPLES, = glob_wildcards(RAW_DATA_DIR + "/{sample}_L00*_R" + str(config['reverse_tag']) + "_001.fastq.gz")
-    SAMPLES = sorted(set(SAMPLES))  # Se usa set() para evitar duplicados
+    RAW_DATA_DIR=RAW_DATA_DIR.rstrip("/")
+    sample_files = glob.glob(RAW_DATA_DIR + '/*_L00*_R2_001.fastq.gz')
+    SAMPLES = sorted(set(re.sub('_L00._R._001.fastq.gz', '', os.path.basename(f)) for f in sample_files))
 else:
-    RAW_DATA_DIR = RESULTS_DIR + "/00_RAW_DATA"
+    RAW_DATA_DIR=RESULTS_DIR+"/00_RAW_DATA"
 
 dir_list = [
     "RULES_DIR", "ENVS_DIR", "DB_DIR", "ADAPTERS_DIR", "RAW_NOTEBOOKS", "RAW_DATA_DIR",
