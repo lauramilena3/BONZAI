@@ -20,9 +20,15 @@ if not RESULTS_DIR and RAW_DATA_DIR:
 
 PAIRED = True
 
+# Asegurar que los READ_TYPES sean correctos
+READ_TYPES = [config['forward_tag'], config['reverse_tag']]
+if any(rt not in ["R1", "R2"] for rt in READ_TYPES):
+    raise ValueError(f"⚠️ Error en READ_TYPES: {READ_TYPES}. Debe ser ['R1', 'R2'].")
+
+# Buscar muestras en el directorio de datos crudos
 if RAW_DATA_DIR:
     sample_files = glob.glob(RAW_DATA_DIR + '/*_L00*_R[12]_001.fastq.gz')
-    SAMPLES = sorted(set(re.sub(r'_L00[0-9]_R[12]_001.fastq.gz$', '', os.path.basename(f)) for f in sample_files))
+    SAMPLES = sorted(set(re.sub(r'_L00\d+_R\d+_001.fastq.gz$', '', os.path.basename(f)) for f in sample_files))
 else:
     RAW_DATA_DIR = RESULTS_DIR + "/00_RAW_DATA"
     SAMPLES = []
@@ -51,7 +57,6 @@ dir_names = [
 
 dirs_dict = dict(zip(dir_list, dir_names))
 
-READ_TYPES = [config['forward_tag'], config['reverse_tag']]
 REFERENCE_GENOME_ACC = config['reference_acc_list'].split()
 
 print("📂 Input Directory:", RAW_DATA_DIR)
