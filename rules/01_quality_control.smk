@@ -17,21 +17,24 @@ rule fastQC_pre:
         """
         fastqc {input.raw_fastq}
         """
+		
 rule fastQC_pre:
     input:
         raw_fastq=dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_001.fastq.gz"
     output:
         html=temp(dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_fastqc.html"),
         zipped=dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_fastqc.zip"
+    log:
+        fastqc_log=dirs_dict["BENCHMARKS"] + "/01_QC/{sample}_L00{lane}_R{read}_fastqc.log"
+    benchmark:
+        dirs_dict["BENCHMARKS"] + "/01_QC/{sample}_L00{lane}_R{read}_pre_qc.tsv"
     message:
         "Performing FastQC on raw data: {input.raw_fastq}"
     conda:
         dirs_dict["ENVS_DIR"] + "/QC.yaml"
-    benchmark:
-        dirs_dict["BENCHMARKS"] + "/01_QC/{sample}_L00{lane}_R{read}_pre_qc.tsv"
     shell:
         """
-        fastqc {input.raw_fastq} --outdir {dirs_dict["RAW_DATA_DIR"]}
+        fastqc {input.raw_fastq} --outdir {dirs_dict["RAW_DATA_DIR"]} &> {log.fastqc_log}
         """
 
 rule fastQC_post:
