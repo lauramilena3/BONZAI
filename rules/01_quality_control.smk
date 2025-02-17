@@ -17,7 +17,6 @@ rule fastQC_pre:
         """
         fastqc {input.raw_fastq}
         """
-
 rule fastQC_pre:
     input:
         raw_fastq=dirs_dict["RAW_DATA_DIR"] + "/{sample}_L00{lane}_R{read}_001.fastq.gz"
