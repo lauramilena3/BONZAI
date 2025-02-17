@@ -13,7 +13,9 @@ rule countReads_gz:
         dirs_dict["BENCHMARKS"] + "/01_QC/{sample}_L00{lane}_R{read}_read_count.tsv"
     shell:
         """
-        echo $(( $(zgrep -Ec "$" {input.fastq}) / 4 )) > {output.counts} 2> {log.count_log}
+        echo "Checking file: {input.fastq}" > {log.count_log}
+        ls -l {input.fastq} >> {log.count_log}
+        zgrep -c "^" {input.fastq} | awk '{{print $1/4}}' > {output.counts} 2>> {log.count_log}
         """
 
 rule fastQC_pre:
