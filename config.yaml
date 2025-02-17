@@ -1,6 +1,8 @@
 #General
-input_dir: ""
-results_dir: ""
+dirs:
+  RAW_DATA_DIR: "/cfs/klemming/projects/supr/naiss2023-23-109/BONZAI/00_RAW_DATA"
+  BENCHMARKS: "/cfs/klemming/projects/supr/naiss2023-23-109/BONZAI/results/BENCHMARK"
+  ENVS_DIR: "/cfs/klemming/projects/supr/naiss2023-23-109/BONZAI/envs"
 
 forward_tag: "R1"
 reverse_tag: "R2"

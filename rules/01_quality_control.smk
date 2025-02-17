@@ -1,3 +1,4 @@
+../Snakefile
 from Snakefile import dirs_dict
 rule countReads_gz:
     input:
